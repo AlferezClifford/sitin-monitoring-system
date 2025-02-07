@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,12 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sitting Monitor - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/bootstrap/bootstrap-5.2.3-dist/css/bootstrap.min.css">
+    <script src="../static/bootstrap/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
+               
     <div class="login-container">
-        <h1>Sitting Monitor Login</h1>
-        
+        <h1>Welcome !</h1>
         <form action="/login" method="post">
             <div class="form-group">
                 <label for="usrename">Email</label>
@@ -21,16 +25,49 @@
                 <label for="password">Password</label>
                 <input type="password" id="password"  name="password" placeholder="password" required>
             </div>
-
-            <button type="submit" class="login-btn">Sign In</button>
-
+            <button type="submit" id="login-btn" class="login-btn">Sign In</button>
+           <!-- Bootstrap Alert for Errors -->
+           {% with messages = get_flashed_messages(with_categories=true) %}
+           {% if messages %}
+               <div class="alert-container">
+                   {% for category, message in messages %}
+                       {% if category == 'danger' %}
+                           <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                               {{ message }}
+                               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                           </div>
+                       {% elif category == 'success' %}
+                           <script>
+                               document.addEventListener("DOMContentLoaded", function() {
+                                   Swal.fire({
+                                       title: "Success!",
+                                       text: "{{ message }}",
+                                       icon: "success",
+                                       confirmButtonText: "OK"
+                                   }).then(() => {
+                                       window.location.href = "{{ url_for('dashboard_template') }}";
+                                   });
+                               });
+                           </script>
+                       {% endif %}
+                   {% endfor %}
+               </div>
+           {% endif %}
+       {% endwith %}
             <div class="helper-links">
                 <a href="#">Forgot password?</a>
                 <br>
                 <a href="{{url_for('registration_template')}}">Create account</a>
             </div>
+          
         </form>
-
+            <h2>Powered By </h2>
+            <div class="img-footer"> 
+                <img src="../static/imgs/PSITS_LOGO(2).png" alt="">
+                <img src="../static/imgs/test.png" alt="">
+                
+            </div>
     </div>
 </body>
 </html>
+

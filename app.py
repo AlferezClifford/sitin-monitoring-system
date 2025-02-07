@@ -1,8 +1,8 @@
-from flask import Flask, render_template, url_for,request,redirect
+from flask import Flask, render_template, url_for,request,redirect, flash
 from dbhelper import add_student_record, get_student_account
 
 app = Flask(__name__)
-
+app.secret_key = 'your_secret_key' 
 @app.route("/")
 def login_template() -> None: 
       return render_template("login.html")
@@ -20,8 +20,10 @@ def login() -> None:
      username = request.form['username']
      password = request.form['password']
      if len(get_student_account(username,password)) > 0: 
-          return redirect(url_for("dashboard_template"))
+          flash("Login successful!", "success")
+          return redirect(url_for("dashboard_template"),)
      else: 
+          flash("Invalid username or password", "danger")
           return redirect(url_for("login_template"))
 
 # get_student info from client 
@@ -38,7 +40,9 @@ def student_info() -> None:
           "password" : request.form['password']
      }
      add_student_record(**student_data)
+     flash("Registration successful! Please log in.", "success")
      return redirect(url_for("login_template"))
+
 
 if __name__ == "__main__": 
     app.run(debug=True)

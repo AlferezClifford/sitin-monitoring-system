@@ -10,7 +10,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+ 
     padding: 1rem;
 }
 
@@ -20,7 +20,10 @@ body {
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     width: 100%;
-    max-width: 480px;
+    max-width: 500px;
+    display:flex;
+    flex-direction: column;
+    flex-wrap: wrap;
 }
 
 h2 {
@@ -113,3 +116,4 @@ label {
         gap: 0;
     }
 }
+

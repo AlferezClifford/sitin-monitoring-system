@@ -1,5 +1,3 @@
-
-
 from mysql.connector import connect
 
 def dbconnect() -> object:
@@ -7,7 +5,7 @@ def dbconnect() -> object:
         host='127.0.0.1',
         user='root',
         password='',
-        database='sitin_monitoring'
+        database='sitin-monitoring'
     )
 
 def get_process(sql: str, params: tuple = ()) -> list:
