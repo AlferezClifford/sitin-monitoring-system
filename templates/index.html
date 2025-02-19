@@ -1,0 +1,144 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <!-- <link rel="stylesheet" href="{{url_for('static', filename = 'css/style.css')}}">
+      -->
+    <link rel="stylesheet" href="../static/css/login-style.css">
+    
+</head>
+<body>
+    <div class="container">
+        <div class="forms">
+            <div class="form login">
+                <span class="title">Login</span>
+
+                <form action="/login">
+                   
+                    <div class="input-field">
+                        <input type="text"  required>
+                        <label for="">Username</label>
+                        <i class="uil uil-user icon"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="password" class="password" required>
+                        <label for="">Password</label>
+                        <i class="uil uil-padlock"></i>
+                        <i class="uil uil-eye-slash show_hide" onclick=""></i>
+                    </div>
+                    <div class="checkbox-text">
+                        <div class="checkbox-content">
+                            <input type="checkbox" id="logCheck">
+                            <label for="logCheck" class="text">Remember me</label>
+                        </div>
+
+                        <a href="#" class="text">Forgot password?</a>
+                    </div>
+
+                    <div class="input-field button">
+                        <input type="submit" value="Login">
+                    </div>
+                </form>
+                <div class="login-signup"> 
+                    <span class="text">Don't have an account? 
+                        <a href="#" class="text signup-link">Signup now</a>
+                    </span>
+                </div>
+            </div>
+
+<!-- Registration Form -->
+            <div class="form signup">
+                <span class="title">Registration</span>
+
+                <form action="/login">
+                    
+                    <div class="input-field">
+                        
+                        <input type="text" required>
+                        <label>Idno</label>
+                        <i class="uil uil-user icon"></i>
+                    </div>
+                    <div class="select-row ">
+                        <div class="input-field test-1">
+                            <input type="text"  required>
+                            <label>First name</label>
+                            <i class="uil uil-user icon"></i>
+                        </div>
+                        <div class="input-field">
+                            <input type="text" required>
+                            <label>Last name</label>
+                            <i class="uil uil-user icon"></i>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <input type="text" required>
+                        <label>Middle name</label>
+                        <i class="uil uil-user icon"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="text" required>
+                        <label>Email</label>
+                        <i class="uil uil-envelope-alt"></i>
+                    </div>
+                    <div class="select-row">
+                        <div class="input-field test-1">
+                            <i class="uil uil-graduation-cap"></i>
+                            <select id="course-select">
+                                <option disabled selected>Course</option>
+                                <option value="BSIT">BSIT</option>
+                                <option value="BSCS">BSCS</option>
+                                <option value="BSBA">BSBA</option>
+                                <option value="BSCPE">BSCPE</option>
+                                <option value="BSCRIM">BSCRIM</option>
+                                <option value="BSHM">BSHM</option>
+                                <option value="BSED">BSED</option>
+                            </select>
+                        </div>
+                        <div class="input-field ">
+                            <i class="uil uil-schedule"></i>
+                            <select >
+                                <option disabled selected>Year</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                    </div>
+                   
+                    <div class="input-field">
+                        <input type="text" required>
+                        <label>Username</label>
+                        <i class="uil uil-user icon"></i>
+                    </div>
+                    
+                    <div class="input-field">
+                        <input type="password" class="password"  required>
+                        <label>Password</label>
+                        <i class="uil uil-padlock"></i>
+                        
+                    </div>
+                    <div class="input-field">
+                        <input type="password" class="password" required>
+                        <label>Re-enter password</label>
+                        <i class="uil uil-padlock"></i>
+                        <i class="uil uil-eye-slash show_hide" onclick=""></i>
+                    </div>
+                    <div class="input-field button">
+                        <input type="submit" value="Register">
+                    </div>
+                </form>
+                <div class="login-signup"> 
+                    <span class="text">Have an account? 
+                        <a href="#" class="text login-link">Signin now</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../static/script.js"></script>
+</body>
+</html>
