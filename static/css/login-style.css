@@ -188,6 +188,11 @@ body {
     color: #333;
 }
 
+.form .i {
+    font-size: 14px;
+    color: #333;
+}
+
 
 .checkbox-content input {
     accent-color: #2E5077;

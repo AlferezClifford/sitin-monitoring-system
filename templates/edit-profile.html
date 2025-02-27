@@ -1,0 +1,173 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
+    <link rel="stylesheet" href="../static/css/dashboard-style.css">
+</head>
+<body>
+    <div class="ParentDivContainer">
+        <div>
+            <nav class="sidebar close">
+                <header>
+                    <div class="image-text">
+                        <span class="image">
+                            <img src="../static/imgs/PSITS_LOGO.png" alt="logo">
+                        </span>
+                        <div class="text header-text">
+                            <span class="name">Sitin-Monitoring</span>
+                            <span class="prefession">Project</span>
+                        </div>
+                    </div>
+
+                    <i class="bx bx-chevron-right toggle"></i>
+                </header>
+                <div class="menu-bar">
+                    <div class="menu">
+                        <ul class="menu-links">
+                            <li class="nav-link">
+                                <a href="#">
+                                    <i class='bx bx-home-alt icon' ></i>
+                                    <span class="text nav-text">Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="#">
+                                    <i class='bx bxs-megaphone  icon' ></i>
+                                    <span class="text nav-text ">Anouncement</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="#">
+                                    <i class='bx bx-notepad icon' ></i>
+                                    <span class="text nav-text">Rules</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="#">
+                                    <i class='bx bx-calendar-check icon'  ></i>
+                                    <span class="text nav-text">Reservation</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="#">
+                                    <i class='bx bx-time-five icon' ></i>
+                                    <span class="text nav-text">History</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="#">
+                                    <i class='bx bx-home-alt icon'></i>
+                                    <span class="text nav-text">Profile</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom-content">
+                        <li class="">
+                            <a href="#">
+                                <i class='bx bx-log-out icon'></i>
+                                <span class="text nav-text">Logout</span>
+                            </a>
+                        </li>
+                        <li class="mode">
+                            <div class="moon-sun">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun  icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark Mode</span>
+                            <div class="toggle-switch"> 
+                                <span class="switch"></span>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="contentDiv">
+            <div class="topNavigation">
+                <div class="items item1 text"> 
+                    <div><i class='bx bxs-bell'></i></div>
+                    <div><h2>Profile</h2></div>
+                </div>
+            </div>
+            <div class="" style="margin-left: 30px;">
+                <div class=""> 
+                    <div><h1>Edit Profile</h1></div>
+                </div>
+            </div>
+            <div class="mainProfileContainer">
+                <div class="editProfileContainer">
+                    <div class="imageProfile">
+                        <img src="../static/imgs/mariadc.jpg" alt="">
+                        <div class="overlay">
+                            <i class='bx bxs-camera-plus icon'></i>
+                        </div>
+                    </div>
+                   
+                    <div class="personalContainer">
+                        <form action="">
+                            <div class="personHeaderContainer">
+                                <h2>Personal Information</h2>
+                            </div>
+                            <div class="row">
+                                <div class="input-field">
+                                    <label>First name</label>
+                                    <input type="text"  >
+                                    <i class='bx bx-edit-alt icon'></i>
+                                </div>
+                               
+                                <div class="input-field">
+                                    <label>Last name</label>
+                                    <input type="text">
+                                    <i class='bx bx-edit-alt icon'></i>
+                                </div>
+                            </div>
+                            <div class="input-field">
+                                <label>Middle name</label>
+                                <input type="text">
+                                <i class='bx bx-edit-alt icon'></i>
+                            </div>
+                            <div class="input-field">
+                                <label>Email</label>
+                                <input type="text" >
+                                <i class='bx bx-edit-alt icon'></i>
+                            </div>
+                            <div class="personHeaderContainer">
+                                <h2>Account</h2>
+                            </div>
+                            <div class="input-field">
+                                <label>Username</label>
+                                <input type="text">
+                                <i class='bx bx-edit-alt icon'></i>
+                            </div>
+                            
+                            <div class="input-field">
+                                <label>Password</label>
+                                <input type="password" class="password">
+                                <i class='bx bx-edit-alt icon'></i>
+                            </div>
+                            <div class="input-field">
+                                <label>Re-enter password</label>
+                                <input type="password" class="password">
+                                <i class='bx bx-edit-alt icon'></i>
+                                <!-- <i class="uil uil-padlock"></i>
+                                <i class="uil uil-eye-slash show_hide" onclick=""></i> -->
+                            </div>
+                     
+                            <div class="input-field button">
+                                <input type="submit" value="Submit">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="../static/script.js"></script> 
+</body>
+</html>
+    
+    
