@@ -59,7 +59,7 @@
                             </li>
                             <li class="nav-link">
                                 <a href="#">
-                                    <i class='bx bx-home-alt icon'></i>
+                                    <i class='bx bx-user icon' ></i>
                                     <span class="text nav-text">Profile</span>
                                 </a>
                             </li>
@@ -98,41 +98,41 @@
                     <div><h1>Edit Profile</h1></div>
                 </div>
             </div>
-            <div class="mainProfileContainer">
+            <!-- <div class="mainProfileContainer">
                 <div class="editProfileContainer">
                     <div class="imageProfile">
-                        <img src="../static/imgs/mariadc.jpg" alt="">
+                        <img id="profile-pic" src="{{ record[9] if record[9] else '/static/default.png' }}" alt="Profile Image">
                         <div class="overlay">
-                            <i class='bx bxs-camera-plus icon'></i>
+                            <i class='bx bxs-camera-plus icon' id="profile-img-icon"></i>
                         </div>
+                        <input id="file-upload" type="file" name="profile_image" accept="image/*" style="display: none;">
                     </div>
-                   
                     <div class="personalContainer">
-                        <form action="">
+                        <form action="/update">
                             <div class="personHeaderContainer">
                                 <h2>Personal Information</h2>
                             </div>
                             <div class="row">
                                 <div class="input-field">
                                     <label>First name</label>
-                                    <input type="text"  >
+                                    <input type="text"  value="{{record[1]}}">
                                     <i class='bx bx-edit-alt icon'></i>
                                 </div>
                                
                                 <div class="input-field">
                                     <label>Last name</label>
-                                    <input type="text">
+                                    <input type="text" value="{{record[2]}}">
                                     <i class='bx bx-edit-alt icon'></i>
                                 </div>
                             </div>
                             <div class="input-field">
                                 <label>Middle name</label>
-                                <input type="text">
+                                <input type="text" value="{{record[3]}}">
                                 <i class='bx bx-edit-alt icon'></i>
                             </div>
                             <div class="input-field">
                                 <label>Email</label>
-                                <input type="text" >
+                                <input type="text" value="{{record[4]}}">
                                 <i class='bx bx-edit-alt icon'></i>
                             </div>
                             <div class="personHeaderContainer">
@@ -140,33 +140,98 @@
                             </div>
                             <div class="input-field">
                                 <label>Username</label>
-                                <input type="text">
+                                <input type="text" value="{{record[5]}}">
                                 <i class='bx bx-edit-alt icon'></i>
                             </div>
                             
                             <div class="input-field">
                                 <label>Password</label>
-                                <input type="password" class="password">
+                                <input type="password" class="password" value="{{record[8]}}">
                                 <i class='bx bx-edit-alt icon'></i>
                             </div>
                             <div class="input-field">
                                 <label>Re-enter password</label>
-                                <input type="password" class="password">
+                                <input type="password" class="password" value="">
                                 <i class='bx bx-edit-alt icon'></i>
-                                <!-- <i class="uil uil-padlock"></i>
-                                <i class="uil uil-eye-slash show_hide" onclick=""></i> -->
                             </div>
                      
                             <div class="input-field button">
-                                <input type="submit" value="Submit">
+                                <input type="submit" value="Save">
                             </div>
                         </form>
                     </div>
                 </div>
+            </div> -->
+            <div class="mainProfileContainer">
+                <form class="editProfileContainer" action="/update_profile" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="existing_profile_image" value="{{ record[9] }}">  <!-- Hidden field to retain old image -->
+                    
+                    <div class="imageProfile">
+                        <img id="profile-pic" src="{{ record[9] if record[9] else '/static/default.png' }}" alt="Profile Image">
+                        <div class="overlay">
+                            <i class="bx bxs-camera-plus icon" id="profile-img-icon"></i>
+                        </div>
+                        <input id="file-upload" type="file" name="profile_image" accept="image/*" style="display: none;">
+                    </div>
+                
+                    <div class="personalContainer">
+                        <div>
+                            <div class="personHeaderContainer">
+                                <h2>Personal Information</h2>
+                            </div>
+                            <div class="row">
+                                <div class="input-field">
+                                    <label>First name</label>
+                                    <input type="text" name="first_name" value="{{record[1]}}" readonly>
+                                    <i class="bx bx-edit-alt icon"></i>
+                                </div>
+                                
+                                <div class="input-field">
+                                    <label>Last name</label>
+                                    <input type="text" name="last_name" value="{{record[2]}}" readonly>
+                                    <i class="bx bx-edit-alt icon"></i>
+                                </div>
+                            </div>
+                            <div class="input-field">
+                                <label>Middle name</label>
+                                <input type="text" name="middle_name" value="{{record[3]}}" readonly>
+                                <i class="bx bx-edit-alt icon"></i>
+                            </div>
+                            <div class="input-field">
+                                <label>Email</label>
+                                <input type="text" name="email" value="{{record[4]}}" readonly>
+                                <i class="bx bx-edit-alt icon"></i>
+                            </div>
+                            <div class="personHeaderContainer">
+                                <h2>Account</h2>
+                            </div>
+                            <div class="input-field">
+                                <label>Username</label>
+                                <input type="text" name="username" value="{{record[7]}}" readonly>
+                                <i class="bx bx-edit-alt icon"></i>
+                            </div>
+                            
+                            <div class="input-field">
+                                <label>Password</label>
+                                <input type="password" class="password" name="password" value="{{record[8]}}" readonly>
+                                <i class="bx bx-edit-alt icon"></i>
+                            </div>
+                            <div class="input-field">
+                                <label>Re-enter password</label>
+                                <input type="password" class="password" value="">
+                                <i class="bx bx-edit-alt icon"></i>
+                            </div>
+                            <div class="input-field button">
+                                <input type="submit" value="Save">
+                            </div>
+                        </div>
+                    </div>
+                </form>                
             </div>
         </div>
     </div>
-<script src="../static/script.js"></script> 
+<script src="../static/darkmode.js"></script> 
+<script src="../static/upload_image.js"></script> 
 </body>
 </html>
     
