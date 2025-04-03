@@ -1,0 +1,291 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
+    <link rel="stylesheet" href="../static/css/dashboard-style.css">
+    
+</head>
+<body>
+    
+    <div class="ParentDivContainer">
+        <div>
+            <nav class="sidebar close">
+                <header>
+                    <div class="image-text">
+                        <span class="image">
+                            <img src="../static/imgs/PSITS_LOGO.png" alt="logo">
+                        </span>
+                        <div class="text header-text">
+                            <span class="name">Sitin-Monitoring</span>
+                            <span class="prefession">Project</span>
+                        </div>
+                    </div>
+
+                    <i class="bx bx-chevron-right toggle"></i>
+                </header>
+                <div class="menu-bar">
+                    <div class="menu">
+                        <ul class="menu-links">
+                            <li class="nav-link">
+                                <a href="{{url_for('dashboard')}}">
+                                    <i class='bx bx-home-alt icon' ></i>
+                                    <span class="text nav-text">Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="#">
+                                    <i class='bx bx-calendar-check icon'  ></i>
+                                    <span class="text nav-text">Reservation</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('history_table_temp')}}">
+                                    <i class='bx bx-time-five icon' ></i>
+                                    <span class="text nav-text">History</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('edit_profile_template')}}">
+                                    <i class='bx bx-user icon' ></i>
+                                    <span class="text nav-text">Profile</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom-content">
+                        <li class="">
+                            <a href="{{url_for('logout')}}">
+                                <i class='bx bx-log-out icon' id="logout-btn"></i>
+                                <span class="text nav-text">Logout</span>
+                            </a>
+                        </li>
+                        <li class="mode">
+                            <div class="moon-sun">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun  icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark Mode</span>
+                            <div class="toggle-switch"> 
+                                <span class="switch"></span>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="contentDiv" style="margin-left: 30px;">
+            <div class="topNavigation">
+                <div class="items item1 text"> 
+                    <div><i class='bx bxs-bell'></i></div>
+                    <div><h2>Profile</h2></div>
+                </div>
+            </div>
+            <div class="sitin-container" >
+                <div class="item-3">
+                    <div style="margin-bottom: 40px;">
+                        <h1>History</h1>
+                    </div>
+                    <div class="input-group marg" style="display: flex; justify-content: space-between;">
+                        <div class="dropdown-group">
+                        </div>
+                        <div class="col-3 " id = "search_btn" > <!-- Adjust the number for different widths -->
+                            <input type="search" class="form-control" id="searchInput" placeholder="Search" aria-label="Search" onkeyup="searchTable()">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <table class="table" id="sitInTable">
+                        <thead style="text-align: center;">
+                            <tr>
+                                <th scope="col">Idno</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Purpose</th>
+                                <th scope="col">Laboratory</th>
+                                <th scope="col">Login</th>
+                                <th scope="col">Logout</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Action</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                    
+                        <tbody style="text-align: center;">
+                            {% for value in student.values() %}
+                            <tr>
+                                {% set is_pending = 'Pending' in value %}
+                    
+                                <!-- Skip 'Pending' but show other values -->
+                                {% for record in value[1:] %}
+                                    {% if record != "Pending" %}
+                                        <td>{{ record }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                    
+                                <!-- Feedback button only if 'Pending' is found -->
+                                <td>
+                                    {% if is_pending %}
+                                        <button type="button" class="btn btn-success feedbackBtn" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#feedbackModal"
+                                                data-id="{{ value[0] }}">  
+                                            FEEDBACK
+                                        </button>
+                                        <td></td>
+                                    {% endif %}
+                                </td>  
+                            </tr> 
+                            {% endfor %}   
+                        </tbody>
+                    </table>
+                    <div id="pagination">
+                        <button onclick="prevPage()" class="btn btn-primary">Previous</button>
+                        <span id="pageInfo"></span>
+                        <button onclick="nextPage()" class="btn btn-primary">Next</button>
+                    </div>
+                    <!-- Feedback Modal -->
+                    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="feedbackModalLabel">Feedback Form</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ url_for('post_feedback') }}" method="post">
+                                        <div class="mb-3">
+                                            <!-- Hidden input for ID (updated dynamically via JavaScript) -->
+                                            <input type="hidden" name="idno" id="modalId">
+                                            <label for="feedbackText" class="form-label">Your Feedback</label>
+                                            <textarea name="feedbackText" class="form-control" id="feedbackText" rows="4" placeholder="Write your comments here..."></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-success w-100">Submit Feedback</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+</body>
+<script>
+     document.addEventListener("DOMContentLoaded", function () {
+        let feedbackButtons = document.querySelectorAll(".feedbackBtn");
+
+        feedbackButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                let id = this.getAttribute("data-id");  // Get the correct row ID
+                console.log(id)
+                document.getElementById("modalId").value = id;  // Set it in the hidden input
+            });
+        });
+    });
+    function searchTable() {
+        let input = document.getElementById("searchInput");
+        let filter = input.value.toLowerCase();
+        let table = document.getElementById("sitInTable");
+        let rows = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < rows.length; i++) { 
+            let cells = rows[i].getElementsByTagName("td");
+            let match = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j]) {
+                    let textValue = cells[j].textContent || cells[j].innerText;
+                    if (textValue.toLowerCase().includes(filter)) {
+                        match = true;
+                        break;
+                    }
+                }
+            }
+
+            rows[i].style.display = match ? "" : "none";
+        }
+    }
+      // Pagination 
+let currentPage = 1;
+    const rowsPerPage = 5;
+
+    function displayTablePage(page) {
+        let table = document.getElementById("sitInTable");
+        let tbody = document.getElementById("tableBody");
+        let rows = tbody.getElementsByTagName("tr");
+
+        let totalPages = Math.ceil(rows.length / rowsPerPage);
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+
+        // Hide all rows
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].style.display = "none";
+        }
+
+        // Show only the rows for the current page
+        for (let i = (page - 1) * rowsPerPage; i < page * rowsPerPage && i < rows.length; i++) {
+            rows[i].style.display = "";
+        }
+
+        // Update page info
+        document.getElementById("pageInfo").innerText = `Page ${page} of ${totalPages}`;
+        currentPage = page;
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            displayTablePage(currentPage - 1);
+        }
+    }
+
+    function nextPage() {
+        let table = document.getElementById("sitInTable");
+        let tbody = document.getElementById("tableBody");
+        let rows = tbody.getElementsByTagName("tr");
+        let totalPages = Math.ceil(rows.length / rowsPerPage);
+
+        if (currentPage < totalPages) {
+            displayTablePage(currentPage + 1);
+        }
+    }
+
+    // Initialize table display
+    displayTablePage(1);
+
+    function resetSession() {
+    document.getElementById('remaining_session').value = 30;
+  }
+  document.getElementById("feedbackForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevents actual form submission
+        
+        // Hide the button
+        document.getElementById("feedbackBtn").style.display = "none";
+        
+        // Show "Done" text
+        document.getElementById("feedbackDoneText").style.display = "block";
+
+        // Close the modal after submission
+        let feedbackModal = bootstrap.Modal.getInstance(document.getElementById("feedbackModal"));
+        feedbackModal.hide();
+    });
+
+
+</script>
+<script src="../static/darkmode.js"></script> 
+</html>
+    
+    

@@ -1,119 +1,78 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/dashboard-style.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <title>Monitoring System</title>
+    <title>Edit Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function(){
+                var output = document.getElementById('profileImage');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
 </head>
 <body>
-    <div class="ParentDivContainer">
-        <div>
-            <nav class="sidebar close">
-                <header>
-                    <div class="image-text">
-                        <span class="image">
-                            <img src="../static/imgs/PSITS_LOGO.png" alt="logo">
-                        </span>
-                        <div class="text header-text">
-                            <span class="name">Sitin-Monitoring</span>
-                            <span class="prefession">Project</span>
-                        </div>
-                    </div>
-
-                    <i class="bx bx-chevron-right toggle"></i>
-                </header>
-                <div class="menu-bar">
-                    <div class="menu">
-                        <ul class="menu-links">
-                            <li class="nav-link">
-                                <a href="#">
-                                    <i class='bx bx-home-alt icon' ></i>
-                                    <span class="text nav-text">Dashboard</span>
-                                </a>
-                            </li>
-                            <li class="nav-link">
-                                <a href="#">
-                                    <i class='bx bx-home-alt icon' ></i>
-                                    <span class="text nav-text">Anouncement</span>
-                                </a>
-                            </li>
-                            <li class="nav-link">
-                                <a href="#">
-                                    <i class='bx bx-home-alt icon' ></i>
-                                    <span class="text nav-text">Rules</span>
-                                </a>
-                            </li>
-                            <li class="nav-link">
-                                <a href="#">
-                                    <i class='bx bx-home-alt icon' ></i>
-                                    <span class="text nav-text">Reservation</span>
-                                </a>
-                            </li>
-                            <li class="nav-link">
-                                <a href="#">
-                                    <i class='bx bx-home-alt icon' ></i>
-                                    <span class="text nav-text">History</span>
-                                </a>
-                            </li>
-                            <li class="nav-link">
-                                <a href="#">
-                                    <i class='bx bx-home-alt icon'></i>
-                                    <span class="text nav-text">Profile</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="bottom-content">
-                        <li class="">
-                            <a href="#">
-                                <i class='bx bx-log-out icon'></i>
-                                <span class="text nav-text">Logout</span>
-                            </a>
-                        </li>
-                        <li class="mode">
-                            <div class="moon-sun">
-                                <i class='bx bx-moon icon moon'></i>
-                                <i class='bx bx-sun  icon sun'></i>
-                            </div>
-                            <span class="mode-text text">Dark Mode</span>
-                            <div class="toggle-switch"> 
-                                <span class="switch"></span>
-                            </div>
-                        </li>
-                    </div>
-                </div>
-            </nav>
-        </div>
-        <div class="contentDiv">
-            <div class="topNavigation">
-                <div class="items item1 text"> 
-                    <div><i class='bx bxs-bell'></i></div>
-                    <div><h2>Profile</h2></div>
-                </div>
-            </div>
-            <div class="mainContainer">
-                    <div class="items item2">Welcome </div>
-                    <div class="items item3">Reserv</div>
-                    <div class="items item4 text item4-container">
-                        <div class="item4innerdiv">
-                            <div class='bx bx-time icon timeicon'></div>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card p-4 shadow-sm">
+                    <h4 class="text-center mb-4">Edit Profile</h4>
+                    <form>
+                        <!-- Profile Picture -->
+                        <div class="mb-3 text-center">
+                            <label for="profilePic" class="form-label">Profile Picture</label>
                             <div>
-                                <h2 class="sessionTxt">Session</h2>
+                                <img id="profileImage" src="https://via.placeholder.com/150" class="rounded-circle mb-2" width="150" height="150" alt="Profile Picture">
                             </div>
+                            <input type="file" class="form-control" id="profilePic" accept="image/*" onchange="previewImage(event)">
                         </div>
-                    </div>
-                <div class="items item5">Section 2</div>
-                <div class="items item6">Main</div>
-                <div class="items item7">History</div>
+                        
+                        <!-- Personal Info -->
+                        <h5>Personal Info</h5>
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstName" placeholder="Enter First Name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="middleName" class="form-label">Middle Name</label>
+                            <input type="text" class="form-control" id="middleName" placeholder="Enter Middle Name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" placeholder="Enter Last Name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter Email">
+                        </div>
+                        
+                        <!-- Account Info -->
+                        <h5>Account</h5>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" disabled value="currentUsername">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Enter New Password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
     
-  
-
-    
-    
-    <script src="../static/script.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
-

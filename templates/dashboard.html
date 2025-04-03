@@ -1,11 +1,53 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile</title>
+    <title>Sitin-Monitoring Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
     <link rel="stylesheet" href="../static/css/dashboard-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #eef1f7;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            margin-top: 40px;
+        }
+        .card-custom {
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background: white;
+            transition: all 0.3s ease-in-out;
+        }
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        .rules div {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            font-weight: 500;
+        }
+        .session-card {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .session-card h1 {
+            font-size: 40px;
+            color: #007bff;
+        }
+    </style>
 </head>
 <body>
     <div class="ParentDivContainer">
@@ -28,21 +70,9 @@
                     <div class="menu">
                         <ul class="menu-links">
                             <li class="nav-link">
-                                <a href="#">
+                                <a href="{{url_for('dashboard')}}">
                                     <i class='bx bx-home-alt icon' ></i>
                                     <span class="text nav-text">Dashboard</span>
-                                </a>
-                            </li>
-                            <li class="nav-link">
-                                <a href="#">
-                                    <i class='bx bxs-megaphone  icon' ></i>
-                                    <span class="text nav-text ">Anouncement</span>
-                                </a>
-                            </li>
-                            <li class="nav-link">
-                                <a href="#">
-                                    <i class='bx bx-notepad icon' ></i>
-                                    <span class="text nav-text">Rules</span>
                                 </a>
                             </li>
                             <li class="nav-link">
@@ -52,7 +82,7 @@
                                 </a>
                             </li>
                             <li class="nav-link">
-                                <a href="#">
+                                <a href="{{url_for('history_table_temp')}}">
                                     <i class='bx bx-time-five icon' ></i>
                                     <span class="text nav-text">History</span>
                                 </a>
@@ -60,15 +90,15 @@
                             <li class="nav-link">
                                 <a href="{{url_for('edit_profile_template')}}">
                                     <i class='bx bx-user icon' ></i>
-                                    <span class="text nav-text">Edit Profile</span>
+                                    <span class="text nav-text">Profile</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
                     <div class="bottom-content">
                         <li class="">
-                            <a href="#">
-                                <i class='bx bx-log-out icon'></i>
+                            <a href="{{url_for('logout')}}">
+                                <i class='bx bx-log-out icon' id="logout-btn"></i>
                                 <span class="text nav-text">Logout</span>
                             </a>
                         </li>
@@ -86,22 +116,84 @@
                 </div>
             </nav>
         </div>
-        <div class="contentDiv">
+        <div class="contentDiv" style="margin-left: 30px;">
             <div class="topNavigation">
                 <div class="items item1 text"> 
                     <div><i class='bx bxs-bell'></i></div>
                     <div><h2>Profile</h2></div>
                 </div>
             </div>
-            <div class="" style="margin-left: 30px;">
-                <div class=""> 
-                    <h1>Welcome {{name}}!</h1>
+            <h2 class="fw-bold mb-5">Welcome, <span class="text-primary">{{record[1]}}!</span></h2>
+            
+                <div class="row">
+                    <!-- Announcements Section -->
+                    <div class="col-md-4">
+                        <div class="card" style="max-height: 500px; overflow-y: auto;">
+                            <div class="card-body">
+                                <h5 class="text-center text-uppercase fw-bold">📢 Announcements</h5>
+                                {% if not announcement %}
+                                    <hr>
+                                    <strong style="font-size: 30px;">No announcement available</strong>
+                                {% else %}
+                                    {% for value in announcement.values() %}
+                                        <hr>
+                                        <div class="p-2 border-bottom">
+                                            <strong>{{value[1]}}| {{value[2]}}</strong>
+                                            <p>{{value[3]}}</p>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Rules Section -->
+                    <div class="col-md-5">
+                        <div class="card" style="max-height: 500px; overflow-y: auto;">
+                            <div class="card-body">
+                                <div class="sticky-top bg-white py-2" style="top: 0; z-index: 100; border-bottom: 1px solid #ddd;">
+                                    <h5 class="text-center text-uppercase fw-bold">University of Cebu</h5>
+                                    <p class="text-center text-uppercase" style="font-size: .9em;"><strong>College of Information & Computer Studies</strong></p>
+                                    <p class="text-uppercase fw-bold">Laboratory Rules and Regulations</p>
+                                </div>
+                                <hr>
+                                <p>To avoid embarrassment and maintain camaraderie with your friends and superiors at our laboratories, please observe the following:</p>
+                                <p><strong>1.</strong> Maintain silence, proper decorum, and discipline inside the laboratory. Mobile phones must be set to silent mode.</p>
+                                <p><strong>2.</strong> Games, including computer and card games, are not allowed inside the lab.</p>
+                                <p><strong>3.</strong> Internet use is only permitted with instructor approval. Downloading or installing software is strictly prohibited.</p>
+                                <p><strong>4.</strong> Accessing inappropriate or non-course-related websites is forbidden.</p>
+                                <p><strong>5.</strong> Tampering with system settings, deleting files, or changing configurations is a major offense.</p>
+                                <p><strong>6.</strong> Usage time should be observed carefully. A fifteen-minute allowance is given, after which the unit must be vacated for other users.</p>
+                                <p><strong>7.</strong> Follow these laboratory decorum guidelines:</p>
+                                <ul>
+                                    <li>Enter only when an instructor is present.</li>
+                                    <li>Deposit all bags at the designated area.</li>
+                                    <li>Follow assigned seating arrangements.</li>
+                                    <li>Close all programs before leaving.</li>
+                                    <li>Return chairs to their proper places.</li>
+                                </ul>
+                                <p><strong>8.</strong> Chewing gum, eating, drinking, smoking, and vandalism are prohibited inside the lab.</p>
+                                <p><strong>9.</strong> Continuous disturbances or inappropriate behavior will result in removal from the lab.</p>
+                                <p><strong>10.</strong> Hostile behavior, including yelling or swearing, will not be tolerated.</p>
+                                <p><strong>11.</strong> Serious offenses will be escalated to the Civil Security Office (CSU).</p>
+                                <p><strong>12.</strong> Report any technical issues immediately to the lab supervisor or instructor.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Session Remaining -->
+                    <div class="col-md-2">
+                        <div class="card" style="max-height: 500px; overflow-y: auto;">
+                            <div class="card-body text-center">
+                                <p class="fw-bold">🕒 Remaining Sessions</p>
+                                <h1>{{record[4]}}</h1>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
         </div>
     </div>
-<script src="../static/darkmode.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<script src="../static/darkmode.js"></script> 
 </html>
-    
-    

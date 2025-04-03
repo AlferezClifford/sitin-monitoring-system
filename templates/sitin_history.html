@@ -1,0 +1,462 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
+    <link rel="stylesheet" href="../static/css/dashboard-style.css">
+    
+</head>
+<body>
+    
+    <div class="ParentDivContainer">
+        <div>
+            <nav class="sidebar close">
+                <header>
+                    <div class="image-text">
+                        <span class="image">
+                            <img src="../static/imgs/PSITS_LOGO.png" alt="logo">
+                        </span>
+                        <div class="text header-text">
+                            <span class="name">Sitin-Monitoring</span>
+                            <span class="prefession">Project</span>
+                        </div>
+                    </div>
+
+                    <i class="bx bx-chevron-right toggle"></i>
+                </header>
+                <div class="menu-bar">
+                    <div class="menu">
+                        <ul class="menu-links">
+                            <li class="nav-link">
+                                <a href="">
+                                    <i class='bx bx-home-alt icon' ></i>
+                                    <span class="text nav-text">Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('announcement_template')}}">
+                                    <i class='bx bxs-megaphone  icon' ></i>
+                                    <span class="text nav-text ">Anouncement</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('students_record_template')}}">
+                                    <i class='bx bxs-megaphone  icon' ></i>
+                                    <span class="text nav-text ">Students</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_template')}}">
+                                    <i class='bx bx-chair icon' ></i>
+                                    <span class="text nav-text">Sitin</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_records_template')}}">
+                                    <i class='bx bx-calendar-check icon'  ></i>
+                                    <span class="text nav-text">Sitin Reports</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_daily_reports')}}">
+                                    <i class='bx bx-pie-chart icon'  ></i>
+                                    <span class="text nav-text">View Sitin-Records</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('feedback_template')}}">
+                                    <i class='bx bxs-report icon'></i>
+                                    <span class="text nav-text">Feedbacks Records</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom-content">
+                        <li class="">
+                            <a href="{{url_for('logout')}}">
+                                <i class='bx bx-log-out icon' id="logout-btn"></i>
+                                <span class="text nav-text">Logout</span>
+                            </a>
+                        </li>
+                        <li class="mode">
+                            <div class="moon-sun">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun  icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark Mode</span>
+                            <div class="toggle-switch"> 
+                                <span class="switch"></span>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="contentDiv" style="margin-left: 30px;">
+            <div class="topNavigation">
+                <div class="items item1 text"> 
+                    <div><i class='bx bxs-bell'></i></div>
+                    <div><h2>Profile</h2></div>
+                </div>
+            </div>
+            <div class="sitin-container" >
+                <div class="item-3">
+                    <div style="margin-bottom: 40px;">
+                        <h1>Sitin History Reports</h1>
+                        <hr>
+                    </div>
+                    <div class="input-group marg" style="display: flex; justify-content: space-between;">
+                        <div class="dropdown-group">
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Filter Records
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                                    <li><a class="dropdown-item filter-option" data-filter="today">Today</a></li>
+                                    <li><a class="dropdown-item filter-option" data-filter="yesterday">Yesterday</a></li>
+                                    <li><a class="dropdown-item filter-option" data-filter="last7">Last 7 Days</a></li>
+                                    <li><a class="dropdown-item filter-option" data-filter="thisMonth">This Month</a></li>
+                                    <li><a class="dropdown-item filter-option" data-filter="lastMonth">Last Month</a></li>
+                                    <li><a class="dropdown-item filter-option" data-filter="thisYear">This Year</a></li>
+                                    <li><a class="dropdown-item filter-option" data-filter="lastYear">Last Year</a></li>
+                                    <li><a class="dropdown-item filter-option" data-filter="all">Show All</a></li>
+                                </ul>
+                            </div>
+                            <div style="display: flex;">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle filterDropdown" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Generate Report
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                                        <li><a class="dropdown-item" href="#" onclick="setExportType('Excel')">Excel</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="setExportType('PDF')">PDF</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="setExportType('CSV')">CSV</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="setExportType('PRINT')">Print</a></li>
+                                    </ul>
+                                </div>
+                                <button class="btn btn-success" onclick="generateExport()">
+                                    <i class='bx bxs-download' style="font-size: 20px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="col-3 " id = "search_btn" > <!-- Adjust the number for different widths -->
+                            <input type="search" class="form-control" id="searchInput" placeholder="Search" aria-label="Search" onkeyup="searchTable()">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                      
+                       
+                    </div>
+                    <table class="table" id="sitInTable">
+                        <thead>
+                          <tr>
+                            <th scope="col">Idno</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Purpose</th>
+                            <th scope="col">Sit Lab</th>
+                            <th scope="col">Login</th>
+                            <th scope="col">Logout</th>
+                            <th scope="col">Date</th>
+                          </tr>
+                          <hr>
+                        </thead>
+                      
+                        <tbody>
+                            {% for key, value in records.items() %}
+                            <tr>
+                                {% for record in value[1:]  %}
+                                {% if record == "Pending" or record == "Completed" %}
+                                {% else %}
+                                    <td>{{ record }}</td>
+                                {% endif %}
+                            {% endfor %}         
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        
+                      </table>
+                      <div id="pagination">
+                        <button onclick="prevPage()" class="btn btn-primary">Previous</button>
+                        <span id="pageInfo"></span>
+                        <button onclick="nextPage()" class="btn btn-primary">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+</body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".filter-option").forEach(item => {
+        item.addEventListener("click", function () {
+            let filterType = this.getAttribute("data-filter");
+            console.log("Filter selected:", filterType); // Logs filter type to console
+
+            let today = new Date();
+            let rows = document.querySelectorAll("#recordTable tr");
+
+            rows.forEach(row => {
+                let recordDate = new Date(row.getAttribute("data-date"));
+                let showRow = false;
+
+                switch (filterType) {
+                    case "today":
+                        showRow = (recordDate.toDateString() === today.toDateString());
+                        break;
+                    case "yesterday":
+                        let yesterday = new Date();
+                        yesterday.setDate(today.getDate() - 1);
+                        showRow = (recordDate.toDateString() === yesterday.toDateString());
+                        break;
+                    case "last7":
+                        let lastWeek = new Date();
+                        lastWeek.setDate(today.getDate() - 7);
+                        showRow = (recordDate >= lastWeek && recordDate <= today);
+                        break;
+                    case "thisMonth":
+                        showRow = (recordDate.getMonth() === today.getMonth() && recordDate.getFullYear() === today.getFullYear());
+                        break;
+                    case "lastMonth":
+                        let lastMonth = new Date();
+                        lastMonth.setMonth(today.getMonth() - 1);
+                        showRow = (recordDate.getMonth() === lastMonth.getMonth() && recordDate.getFullYear() === lastMonth.getFullYear());
+                        break;
+                    case "thisYear":
+                        showRow = (recordDate.getFullYear() === today.getFullYear());
+                        break;
+                    case "lastYear":
+                        showRow = (recordDate.getFullYear() === today.getFullYear() - 1);
+                        break;
+                    case "all":
+                        showRow = true;
+                        break;
+                }
+
+                row.style.display = showRow ? "" : "none";
+            });
+        });
+    });
+});
+
+    function searchTable() {
+        let input = document.getElementById("searchInput");
+        let filter = input.value.toLowerCase();
+        let table = document.getElementById("sitInTable");
+        let rows = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < rows.length; i++) { 
+            let cells = rows[i].getElementsByTagName("td");
+            let match = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j]) {
+                    let textValue = cells[j].textContent || cells[j].innerText;
+                    if (textValue.toLowerCase().includes(filter)) {
+                        match = true;
+                        break;
+                    }
+                }
+            }
+
+            rows[i].style.display = match ? "" : "none";
+        }
+    }
+
+    let exportType = ''; // Store selected export type
+
+function setExportType(type) {
+    exportType = type;
+    document.getElementById("exportDropdown").textContent = type; // Update button text
+}
+
+function generateExport() {
+    if (exportType === 'Excel') {
+        exportToExcel();
+    } else if (exportType === 'PDF') {
+        exportToPDF();
+    } else if (exportType === 'CSV') {
+        exportToCSV();
+    } else if(exportType === 'PRINT'){
+        printTable()
+    } else {
+        alert("Please select an export format!");
+    }
+}
+
+// Export to Excel
+function exportToExcel() {
+    // Clone the table and show all rows
+    let table = document.getElementById("sitInTable");
+    let clone = table.cloneNode(true);
+    clone.querySelectorAll('tr').forEach(row => row.style.display = '');
+    document.body.appendChild(clone);
+    clone.style.visibility = 'hidden';
+    clone.style.position = 'absolute';
+    clone.style.left = '-9999px';
+
+    let wb = XLSX.utils.table_to_book(clone, { sheet: "Student Records" });
+    let ws = wb.Sheets["Student Records"];
+
+    // Auto-adjust column widths
+    let columnWidths = [];
+    let range = XLSX.utils.decode_range(ws["!ref"]);
+
+    for (let C = range.s.c; C <= range.e.c; C++) {
+        let maxWidth = 10;
+        for (let R = range.s.r; R <= range.e.r; R++) {
+            let cellRef = XLSX.utils.encode_cell({ r: R, c: C });
+            let cell = ws[cellRef];
+            if (cell && cell.v) {
+                let cellValue = cell.v.toString();
+                maxWidth = Math.max(maxWidth, cellValue.length + 2);
+            }
+        }
+        columnWidths.push({ wch: maxWidth });
+    }
+    ws["!cols"] = columnWidths;
+
+    // Fix Date Column Format
+    for (let R = range.s.r + 1; R <= range.e.r; R++) {
+        let dateCellRef = XLSX.utils.encode_cell({ r: R, c: 6 });
+        if (ws[dateCellRef] && ws[dateCellRef].v) {
+            let excelDate = new Date(ws[dateCellRef].v);
+            ws[dateCellRef].v = excelDate;
+            ws[dateCellRef].t = "d";
+            ws[dateCellRef].z = "yyyy-mm-dd";
+        }
+    }
+
+    XLSX.writeFile(wb, "student_records.xlsx");
+    document.body.removeChild(clone);
+}
+
+// Export to PDF
+function exportToPDF() {
+    const { jsPDF } = window.jspdf;
+    let doc = new jsPDF();
+    
+    // Clone table and show all rows
+    let table = document.getElementById("sitInTable");
+    let clone = table.cloneNode(true);
+    clone.querySelectorAll('tr').forEach(row => row.style.display = '');
+    document.body.appendChild(clone);
+    clone.style.visibility = 'hidden';
+    clone.style.position = 'absolute';
+    clone.style.left = '-9999px';
+
+    doc.text("Student Records", 14, 10);
+    doc.autoTable({ html: clone });
+    doc.save("student_records.pdf");
+
+    document.body.removeChild(clone);
+}
+
+// Export to CSV
+function exportToCSV() {
+    // Clone table and show all rows
+    let table = document.getElementById("sitInTable");
+    let clone = table.cloneNode(true);
+    clone.querySelectorAll('tr').forEach(row => row.style.display = '');
+    document.body.appendChild(clone);
+    clone.style.visibility = 'hidden';
+    clone.style.position = 'absolute';
+    clone.style.left = '-9999px';
+
+    let rows = clone.querySelectorAll("tr");
+    let csvContent = "";
+    rows.forEach(row => {
+        let cols = row.querySelectorAll("th, td");
+        let rowData = [];
+        cols.forEach(col => rowData.push(col.innerText));
+        csvContent += rowData.join(",") + "\n";
+    });
+
+    let blob = new Blob([csvContent], { type: "text/csv" });
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "student_records.csv";
+    a.click();
+    document.body.removeChild(clone);
+}
+// Print Table
+function printTable() {
+    let table = document.getElementById("sitInTable");
+    let clone = table.cloneNode(true);
+    clone.querySelectorAll('tr').forEach(row => row.style.display = '');
+
+    let printWindow = window.open('', '_blank');
+    printWindow.document.write('<html><head><title>Print</title></head><body>');
+    printWindow.document.write('<h1>Student Records</h1>');
+    printWindow.document.write(clone.outerHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+}
+
+let currentPage = 1;
+const rowsPerPage = 5;
+
+function displayTablePage(page) {
+    let table = document.getElementById("sitInTable");
+    let rows = table.getElementsByTagName("tr"); // Get all rows in the table (including header)
+    let totalRows = rows.length - 1; // Exclude the header row
+
+    let totalPages = Math.ceil(totalRows / rowsPerPage);
+    if (page < 1) page = 1;
+    if (page > totalPages) page = totalPages;
+
+    // Hide all rows
+    for (let i = 1; i < rows.length; i++) {
+        rows[i].style.display = "none";
+    }
+
+    // Show only the rows for the current page
+    for (let i = (page - 1) * rowsPerPage + 1; i < page * rowsPerPage + 1 && i < rows.length; i++) {
+        rows[i].style.display = "";
+    }
+
+    // Update page info
+    document.getElementById("pageInfo").innerText = `Page ${page} of ${totalPages}`;
+    currentPage = page;
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        displayTablePage(currentPage - 1);
+    }
+}
+
+function nextPage() {
+    let table = document.getElementById("sitInTable");
+    let rows = table.getElementsByTagName("tr"); // Get all rows in the table (including header)
+    let totalRows = rows.length - 1; // Exclude the header row
+    let totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    if (currentPage < totalPages) {
+        displayTablePage(currentPage + 1);
+    }
+}
+
+// Initialize table display
+displayTablePage(1);
+
+
+</script>
+<script src="../static/darkmode.js"></script> 
+</html>
+    
+    

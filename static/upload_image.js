@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function () {
     const fileUpload = document.getElementById("file-upload");
     const profilePic = document.getElementById("profile-pic");
@@ -6,11 +5,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const editIcons = document.querySelectorAll(".bx-edit-alt");
     const inputs = document.querySelectorAll(".input-field input");
     const form = document.querySelector(".editProfileContainer");
+    const logoutButton = document.getElementById("logout-btn");
 
-    let originalValues = {};  // Store original input values
-    let imageChanged = false; // Track if image was changed
+    let originalValues = {};  
+    let imageChanged = false;  
 
-    // Store initial values for tracking changes
+    // Store initial values
     inputs.forEach(input => {
         originalValues[input.name] = input.value;
     });
@@ -21,66 +21,78 @@ document.addEventListener("DOMContentLoaded", function () {
             const input = this.previousElementSibling;
             input.readOnly = !input.readOnly;
             if (!input.readOnly) {
+                input.value = "";
                 input.focus();
+            } else {
+                input.value = originalValues[input.name]; 
             }
         });
     });
 
-    // Detect image change
+    // Open file input when clicking profile image
     profileIcon.addEventListener("click", () => {
         fileUpload.click();
     });
 
+    // Preview image on selection
     fileUpload.addEventListener("change", function () {
         const file = fileUpload.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function (e) {
                 profilePic.src = e.target.result;
-                imageChanged = true;  // Mark image as changed
+                imageChanged = true;
             };
             reader.readAsDataURL(file);
         }
     });
 
-    // Form Submission - Only Send Changed Fields
+    // Submit the form, sending only changed fields
     form.addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent default submission
+        event.preventDefault();
 
         let formData = new FormData();
-        let isChanged = false;
+        let hasChanges = false;
 
-        // Check for modified fields
+        // Check input fields and only add changed values
         inputs.forEach(input => {
-            if (input.name && input.value !== originalValues[input.name]) {
+            if (input.value !== originalValues[input.name] && input.value.trim() !== "") {
                 formData.append(input.name, input.value);
-                isChanged = true;
+                hasChanges = true;
+            } else {
+                formData.append(input.name, "null"); // Send "null" for unchanged fields
             }
         });
 
-        // Add image if changed
-        if (imageChanged && fileUpload.files[0]) {
+        // Check if image has changed
+        if (imageChanged && fileUpload.files.length > 0) {
             formData.append("profile_image", fileUpload.files[0]);
-            isChanged = true;
+            hasChanges = true;
         }
 
-        // Stop submission if no changes
-        if (!isChanged) {
+        if (!hasChanges) {
             alert("No changes detected.");
             return;
         }
 
-        // Send the form data via AJAX
-        fetch("/update_profile", {
+        fetch(form.action, {
             method: "POST",
             body: formData
         })
-        .then(response => response.json())  // Assuming JSON response
+        .then(response => response.json())
         .then(data => {
-            alert(data.message); // Success message
-            location.reload();   // Refresh page
+            if (data.success) {
+               
+                window.location.reload();
+            } else {
+                alert("Error updating profile.");
+            }
         })
         .catch(error => console.error("Error:", error));
     });
-});
 
+    // Logout action
+    logoutButton.addEventListener("click", function () {
+        window.location.href = "/logout";
+    });
+});

@@ -1,0 +1,462 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 JS (Popper Included) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
+    <link rel="stylesheet" href="../static/css/dashboard-style.css">
+    
+</head>
+<body>
+    <div class="ParentDivContainer">
+        <div>
+            <nav class="sidebar close">
+                <header>
+                    <div class="image-text">
+                        <span class="image">
+                            <img src="../static/imgs/PSITS_LOGO.png" alt="logo">
+                        </span>
+                        <div class="text header-text">
+                            <span class="name">Sitin-Monitoring</span>
+                            <span class="prefession">Project</span>
+                        </div>
+                    </div>
+
+                    <i class="bx bx-chevron-right toggle"></i>
+                </header>
+                <div class="menu-bar">
+                    <div class="menu">
+                        <ul class="menu-links">
+                            <li class="nav-link">
+                                <a href="">
+                                    <i class='bx bx-home-alt icon' ></i>
+                                    <span class="text nav-text">Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('announcement_template')}}">
+                                    <i class='bx bxs-megaphone  icon' ></i>
+                                    <span class="text nav-text ">Anouncement</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('students_record_template')}}">
+                                    <i class='bx bxs-megaphone  icon' ></i>
+                                    <span class="text nav-text ">Students</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_template')}}">
+                                    <i class='bx bx-chair icon' ></i>
+                                    <span class="text nav-text">Sitin</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_records_template')}}">
+                                    <i class='bx bx-calendar-check icon'  ></i>
+                                    <span class="text nav-text">Sitin Reports</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_daily_reports')}}">
+                                    <i class='bx bx-pie-chart icon'  ></i>
+                                    <span class="text nav-text">View Sitin-Records</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('feedback_template')}}">
+                                    <i class='bx bxs-report icon'></i>
+                                    <span class="text nav-text">Feedbacks Records</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom-content">
+                        <li class="">
+                            <a href="{{url_for('logout')}}">
+                                <i class='bx bx-log-out icon' id="logout-btn"></i>
+                                <span class="text nav-text">Logout</span>
+                            </a>
+                        </li>
+                        <li class="mode">
+                            <div class="moon-sun">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun  icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark Mode</span>
+                            <div class="toggle-switch"> 
+                                <span class="switch"></span>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="contentDiv" style="margin-left: 30px;">
+            <div class="topNavigation">
+                <div class="items item1 text"> 
+                    <div><i class='bx bxs-bell'></i></div>
+                    <div><h2>Profile</h2></div>
+                </div>
+            </div>
+            <div class="sitin-container" style="justify-content: center;">
+                <div class="item-2" style=" width: 100%;">
+                    <div style="margin-bottom: 30px;">
+                        <h1>Student Record</h1>
+                        <hr>
+                    </div>
+                    
+                    <div class="input-group marg" style="display: flex; justify-content: space-between;">
+                        <form>
+                            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#resetModal">
+                                Reset All Sessions
+                            </button>
+                        </form>
+                        <div class="col-3 " id = "search_btn" > <!-- Adjust the number for different widths -->
+                            <input type="search" class="form-control" id="searchInput" placeholder="Search" aria-label="Search" onkeyup="searchTable()">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div class="modal fade" id="resetModal" tabindex="-1" aria-labelledby="resetModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="resetModalLabel">Confirmation</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to reset all sessions?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form action="{{url_for('reset_sessions')}}">
+                                            <button type="submit" class="btn btn-danger">Yes</button>
+                                        </form>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="resetModalLabel">Confirmation</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete student?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form action="{{url_for('delete_student')}}" method="post">
+                                            <input type="hidden" name="idno" id="modalId">
+                                            <button type="submit" class="btn btn-danger">Yes</button>
+                                        </form>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table" id="sitInTable">
+                        <thead style="text-align: center;">
+                            <tr>
+                                <th scope="col">ID Number</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Course</th>
+                                <th scope="col">Year Level</th>
+                                <th scope="col">Remaining Session</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" style="text-align: center;">
+                            {% for value in students.values() %}
+                                <tr>
+                                    {% for record in value %}
+                                        <td>{{record}}</td>
+                                    {% endfor %}
+                                    <td>
+                                        <div class="s-action_container">
+                                            <button type="button" class="btn btn-primary  edit-btn" data-idno="{{value[0]}}" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit</button>
+                                                
+                                                <button type="submit" class="btn btn-danger feedbackBtn" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#deleteModal"
+                                                    data-id="{{ value[0] }}">  
+                                                    DELETE  
+                                            </button>
+                                        </div>
+                                    </td>  
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                      <div id="pagination">
+                        <button onclick="prevPage()" class="btn btn-primary">Previous</button>
+                        <span id="pageInfo"></span>
+                        <button onclick="nextPage()" class="btn btn-primary">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ <!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm" action="{{url_for('update_student')}} " method="post">
+                    <!-- ID Number (Read-only) -->
+                    <div class="mb-3">
+                        <label class="form-label">ID Number</label>
+                        <input type="text" name='idno' class="form-control" id="idno" readonly>
+                    </div>
+
+                    <h5>Personal Information</h5>
+                    <div class="mb-3">
+                        <label class="form-label">First Name</label>
+                        <input type="text" name='first_name'class="form-control" id="first_name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Middle Name</label>
+                        <input type="text" name="middle_name" class="form-control" id="middle_name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" name="last_name" class="form-control" id="last_name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" id="email">
+                    </div>
+
+                    <h5>School Information</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Course</label>
+                        <select name="course" class="form-select" id="course">
+                            <option value="BSIT">BSIT</option>
+                            <option value="BSCPE">BSCPE</option>
+                            <option value="BSCS">BSCS</option>
+                            <option value="BSHM">BSHM</option>
+                            <option value="BSBA">BSBA</option>
+                            <option value="BSCRIM">BSCRIM</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Year Level</label>
+                        <select name="year" class="form-select" id="year">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 d-flex align-items-center">
+                        <label class="form-label me-3">Remaining Sessions</label>
+                        <input name="remaining_session" type="text" class="form-control w-25" id="remaining_session" readonly>
+                        <button type="button" class="btn btn-warning ms-2" onclick="resetSession()">Reset to 30</button>
+                    </div>
+
+                    <h5>Student Account</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input name="user_name"  type="text" class="form-control" id="user_name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input name="password" type="password" class="form-control" id="password">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirm_password">
+                    </div>
+
+                    <!-- Modal Footer inside form -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+     document.addEventListener("DOMContentLoaded", function () {
+        let feedbackButtons = document.querySelectorAll(".feedbackBtn");
+
+        feedbackButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                let id = this.getAttribute("data-id");  // Get the correct row ID
+                console.log(id)
+                document.getElementById("modalId").value = id;  // Set it in the hidden input
+            });
+        });
+    });
+    function searchTable() {
+        let input = document.getElementById("searchInput");
+        let filter = input.value.toLowerCase();
+        let table = document.getElementById("sitInTable");
+        let rows = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < rows.length; i++) { 
+            let cells = rows[i].getElementsByTagName("td");
+            let match = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j]) {
+                    let textValue = cells[j].textContent || cells[j].innerText;
+                    if (textValue.toLowerCase().includes(filter)) {
+                        match = true;
+                        break;
+                    }
+                }
+            }
+
+            rows[i].style.display = match ? "" : "none";
+        }
+    }
+
+    // Pagination 
+    let currentPage = 1;
+    const rowsPerPage = 5;
+
+    function displayTablePage(page) {
+        let table = document.getElementById("sitInTable");
+        let tbody = document.getElementById("tableBody");
+        let rows = tbody.getElementsByTagName("tr");
+
+        let totalPages = Math.ceil(rows.length / rowsPerPage);
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+
+        // Hide all rows
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].style.display = "none";
+        }
+
+        // Show only the rows for the current page
+        for (let i = (page - 1) * rowsPerPage; i < page * rowsPerPage && i < rows.length; i++) {
+            rows[i].style.display = "";
+        }
+
+        // Update page info
+        document.getElementById("pageInfo").innerText = `Page ${page} of ${totalPages}`;
+        currentPage = page;
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            displayTablePage(currentPage - 1);
+        }
+    }
+
+    function nextPage() {
+        let table = document.getElementById("sitInTable");
+        let tbody = document.getElementById("tableBody");
+        let rows = tbody.getElementsByTagName("tr");
+        let totalPages = Math.ceil(rows.length / rowsPerPage);
+
+        if (currentPage < totalPages) {
+            displayTablePage(currentPage + 1);
+        }
+    }
+
+    // Initialize table display
+    displayTablePage(1);
+
+    function resetSession() {
+    document.getElementById('remaining_session').value = 30;
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    let editProfileForm = document.getElementById("editProfileForm");
+    let originalData = {};
+
+    // Function to store the original values
+    function storeOriginalData() {
+        originalData = {
+            first_name: document.getElementById("first_name").value,
+            middle_name: document.getElementById("middle_name").value,
+            last_name: document.getElementById("last_name").value,
+            email: document.getElementById("email").value,
+            course: document.getElementById("course").value,
+            year: document.getElementById("year").value,
+            remaining_session: document.getElementById("remaining_session").value,
+            user_name: document.getElementById("user_name").value,
+            password: document.getElementById("password").value,
+            confirm_password: document.getElementById("confirm_password").value
+        };
+    }
+
+    // Function to check for changes
+    function hasChanges() {
+        return Object.keys(originalData).some(key => 
+            document.getElementById(key).value !== originalData[key]
+        );
+    }
+
+    // Attach event to edit buttons to fetch and store data
+    document.querySelectorAll(".edit-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            let idno = this.getAttribute("data-idno");
+            fetch(`/list-of-studentsts/searched_by_id?idno=${idno}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        document.getElementById("idno").value = data.idno;
+                        document.getElementById("first_name").value = data.first_name;
+                        document.getElementById("middle_name").value = data.middle_name;
+                        document.getElementById("last_name").value = data.last_name;
+                        document.getElementById("email").value = data.email;
+                        document.getElementById("course").value = data.course;
+                        document.getElementById("year").value = data.year;
+                        document.getElementById("remaining_session").value = data.remaining_session;
+                        document.getElementById("user_name").value = data.user_name;
+                        document.getElementById("password").value = ""; // Clear password fields
+                        document.getElementById("confirm_password").value = "";
+
+                        // Store original data after setting values
+                        storeOriginalData();
+                    } else {
+                        alert("Student not found!");
+                    }
+                })
+                .catch(error => console.error("Error fetching student data:", error));
+        });
+    });
+    function setUnchangedFieldsToNull() {
+    Object.keys(originalData).forEach(key => {
+        let inputElement = document.getElementById(key);
+        if (inputElement && inputElement.value === originalData[key]) {
+            inputElement.value = ""; // Set unchanged fields to empty (or null in backend)
+        }
+    });
+}
+    // Prevent form submission if no changes
+    editProfileForm.addEventListener("submit", function (event) {
+        if (!hasChanges()) {
+            event.preventDefault();
+            alert("No changes detected. Please edit at least one field.");
+        } else {
+            setUnchangedFieldsToNull();
+        }
+    });
+});
+</script>
+<script src="../static/darkmode.js"></script> 
+</html>
+    
+    

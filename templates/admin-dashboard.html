@@ -2,11 +2,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <title>Edit Profile</title>
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
     <link rel="stylesheet" href="../static/css/dashboard-style.css">
-    <title>Document</title>
 </head>
 <body>
     <div class="ParentDivContainer">
@@ -29,47 +28,47 @@
                     <div class="menu">
                         <ul class="menu-links">
                             <li class="nav-link">
-                                <a href="#">
+                                <a href="">
                                     <i class='bx bx-home-alt icon' ></i>
                                     <span class="text nav-text">Dashboard</span>
                                 </a>
                             </li>
                             <li class="nav-link">
-                                <a href="#">
+                                <a href="{{url_for('announcement_template')}}">
                                     <i class='bx bxs-megaphone  icon' ></i>
                                     <span class="text nav-text ">Anouncement</span>
                                 </a>
                             </li>
                             <li class="nav-link">
-                                <a href="#">
-                                    <i class='bx bx-notepad icon' ></i>
-                                    <span class="text nav-text">Rules</span>
+                                <a href="{{url_for('students_record_template')}}">
+                                    <i class='bx bxs-megaphone  icon' ></i>
+                                    <span class="text nav-text ">Students</span>
                                 </a>
                             </li>
                             <li class="nav-link">
-                                <a href="#">
+                                <a href="{{url_for('sitin_template')}}">
+                                    <i class='bx bx-chair icon' ></i>
+                                    <span class="text nav-text">Sitin</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_records_template')}}">
                                     <i class='bx bx-calendar-check icon'  ></i>
-                                    <span class="text nav-text">Reservation</span>
+                                    <span class="text nav-text">Sitin Records</span>
                                 </a>
                             </li>
                             <li class="nav-link">
-                                <a href="#">
-                                    <i class='bx bx-time-five icon' ></i>
-                                    <span class="text nav-text">History</span>
-                                </a>
-                            </li>
-                            <li class="nav-link">
-                                <a href="#">
-                                    <i class='bx bx-home-alt icon'></i>
-                                    <span class="text nav-text">Profile</span>
+                                <a href="{{url_for('feedback_template')}}">
+                                    <i class='bx bxs-report icon'></i>
+                                    <span class="text nav-text">Feedbacks Records</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
                     <div class="bottom-content">
                         <li class="">
-                            <a href="#">
-                                <i class='bx bx-log-out icon'></i>
+                            <a href="{{url_for('logout')}}">
+                                <i class='bx bx-log-out icon' id="logout-btn"></i>
                                 <span class="text nav-text">Logout</span>
                             </a>
                         </li>
@@ -95,31 +94,14 @@
                 </div>
             </div>
             <div class="" style="margin-left: 30px;">
-                <div><h1>Rules</h1></div>
-            </div>
-            <div class="mainProfileContainer">
-                
-               <div class="rulesContainer">
-                    <div class="rulesHeader">
-                        <h2>Lab Rules</h2>
-                    </div>
-                    <hr>
-                    <div class="rulesDivContext">
-                        <div class="rulesImage">
-                            <img src="../static/imgs/comlab.png" alt="">
-                        </div>
-                        <div class="rulesContext">
-                            <p class="text">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Error magnam et eaque enim dolorem temporibus accusamus in nisi eveniet dolor. Quia atque quibusdam hic distinctio? Aliquid omnis quam magnam fugit.
-                            Veritatis officia doloremque facilis dolor, autem deleniti molestias? Harum molestias qui, magni itaque fugit id totam voluptatibus earum quo ab odio, numquam eveniet animi expedita incidunt voluptatum beatae natus corporis.
-                            Ipsa recusandae sequi earum et ex eos blanditiis voluptatum numquam rem hic sapiente facere nulla labore obcaecati, a delectus culpa corrupti maxime nostrum cumque debitis! Maxime ducimus magnam nam dolorum!
-                            Totam error itaque vero inventore consectetur in veniam ex sed temporibus dolorem esse beatae, ipsam unde tempore nisi quasi dolores voluptas nam sunt ad voluptatem! Impedit quasi unde autem itaque!</p>
-                        </div>
-                    </div>
-                
-               </div>
+                <div class=""> 
+                    <h1>Welcome {{record[1]}}!</h1>
+                </div>
             </div>
         </div>
     </div>
-    <script src="../static/darkmode.js"></script>
+<script src="../static/darkmode.js"></script> 
 </body>
 </html>
+    
+    
