@@ -10,38 +10,126 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
     <link rel="stylesheet" href="../static/css/dashboard-style.css">
-    <style>
-        .table-responsive {
-            overflow-x: auto;
-        }
-        .available {
-            background-color: #e8f5e9 !important;
-        }
-        .occupied {
-            background-color: #ffebee !important;
-        }
-        .time-col {
-            font-weight: bold;
-            white-space: nowrap;
-        }
-        .schedule-tab {
-            display: none;
-        }
-        .schedule-tab.active {
-            display: block;
-        }
-        .nav-tabs .nav-link {
-            padding: 10px 20px;
-            font-weight: 500;
-        }
-        @media (max-width: 768px) {
-            .nav-tabs {
-                overflow-x: auto;
-                flex-wrap: nowrap;
-                white-space: nowrap;
-            }
-        }
-    </style>
+   <style>
+    body {
+        background-color: #FFF9F0;
+        color: #2D2A3D;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .nav-tabs .nav-link {
+        background-color: #FFD9EC;
+        color: #2D2A3D;
+        margin-right: 5px;
+        border-radius: 10px 10px 0 0;
+        border: none;
+    }
+
+    .nav-tabs .nav-link.active {
+        background-color: #FF6AC2;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .table th {
+        background-color: #FFE0F0;
+        color: #2D2A3D;
+        font-weight: 600;
+    }
+
+    .table td {
+        color: #2D2A3D;
+    }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: #FFF3F7;
+    }
+
+    .available {
+        background-color: #D0F2F1 !important; /* minty blue */
+        color: #2D2A3D;
+        font-weight: 500;
+    }
+
+    .occupied {
+        background-color: #FFCEDF !important; /* soft pink */
+        color: #2D2A3D;
+        font-weight: 500;
+    }
+
+    .time-col {
+        background-color: #FFD9EC !important;
+        font-weight: bold;
+    }
+
+    h1, h2 {
+        color: #2D2A3D;
+        font-weight: 700;
+    }
+
+    .btn-danger {
+        background-color: #FF6AC2;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background-color: #e85cad;
+    }
+
+    .notification-header {
+        background-color: #FF6AC2;
+        color: #fff;
+    }
+
+    .notification-item {
+        background-color: #FFE0F0;
+        border-left: 4px solid #FF6AC2;
+    }
+
+    .clear-btn {
+        background-color: #FF6AC2;
+        border: none;
+    }
+
+    .toggle-switch {
+        background-color: #A0E7E5;
+        border-radius: 20px;
+    }
+
+    .sidebar {
+        background-color: #FFE0F0;
+    }
+
+    .nav-link a {
+        color: #2D2A3D;
+    }
+
+    .nav-link a:hover {
+        background-color: #FFD9EC;
+        border-radius: 10px;
+    }
+
+    .notification-badge {
+        background-color: #FF6AC2;
+        color: #fff;
+    }
+
+    .tab-content {
+        border: 2px solid #FFD9EC;
+        border-top: none;
+        border-radius: 0 0 10px 10px;
+        padding: 15px;
+        background-color: #fff;
+    }
+</style>
+
 </head>
 <body>
     <div class="ParentDivContainer">

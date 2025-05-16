@@ -1,11 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 /* https://colorhunt.co/palette/2e50774da1a979d7bef6f4f0 */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+   font-family: 'Roboto', sans-serif;
 }
 
 body {
@@ -15,12 +14,12 @@ body {
     height: 100vh;
 }
 :root {
-    --body-color: #E4E9F7;
-    --sidebar-color: #fff;
-    --primary-color: #695CFE;
-    --primary-color-light: #F6F5FF;
-    --toogle-color: #ddd;
-    --text-color: #707070;
+--body-color: #FFF9F0;             /* Soft peach base */
+--sidebar-color: #FFE0F0;          /* Light pink for pop */
+--primary-color: #FF6AC2;          /* Bright pink - energetic and fun */
+--primary-color-light: #FFD9EC;    /* Soft pink highlight */
+--toogle-color: #A0E7E5;           /* Minty blue-green toggle for contrast */
+--text-color: #2D2A3D;             /* Rich dark violet-gray for strong text */
 
     --tran-02: all 0.2s ease;
     --tran-03: all 0.3s ease;
@@ -939,8 +938,12 @@ body.dark .menu-bar .mode i.sun {
     gap: 30px;
     width: 100%;
     border-radius: 30px;
-    background: var(--primary-color-light);
+    background: var(--body-color);
     padding: 20px 50px;
+}
+
+.tableds {
+    background-color: var(--toogle-colo);
 }
 .r-row {
     display: flex;

@@ -12,60 +12,142 @@
     <link rel="stylesheet" href="../static/css/dashboard-style.css">
 
     <style>
-        .table thead th {
-            background-color: #343a40;
-            color: white;
-            position: sticky;
-            top: 0;
-        }
-        .rank-1 {
-            background-color: #fff9e6 !important; /* Light gold background */
-        }
-        .rank-2 {
-            background-color: #f8f9fa !important; /* Light silver background */
-        }
-        .rank-3 {
-            background-color: #fdf3e6 !important; /* Light bronze background */
-        }
-        .current-user {
-            background-color: #d4edda !important;
-            font-weight: bold;
-            position: relative;
-        }
-        .current-user::after {
-            content: "YOU";
-            position: absolute;
-            right: 10px;
-            background-color: #28a745;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-        }
-        .table-hover tbody tr:hover {
-            transform: scale(1.01);
-            transition: transform 0.2s;
-        }
-        .page-item.active .page-link {
-            background-color: #343a40;
-            border-color: #343a40;
-        }
-        .page-link {
-            color: #343a40;
-        }
-        .rank-icon {
-            margin-right: 8px;
-        }
-        .gold-icon {
-            color: #ffd700;
-        }
-        .silver-icon {
-            color: #c0c0c0;
-        }
-        .bronze-icon {
-            color: #cd7f32;
-        }
-    </style>
+    body {
+        background: linear-gradient(to right, #fdfbfb, #ebedee);
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .table {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background-color: #6f42c1;
+        color: white;
+        position: sticky;
+        top: 0;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .table-hover tbody tr:hover {
+        transform: scale(1.01);
+        transition: 0.2s ease-in-out;
+        background-color: #f1f1f9;
+    }
+
+    .rank-1 {
+        background: linear-gradient(to right, #ffe259, #ffa751) !important;
+        color: #000;
+    }
+
+    .rank-2 {
+        background: linear-gradient(to right, #e0e0e0, #c0c0c0) !important;
+        color: #000;
+    }
+
+    .rank-3 {
+        background: linear-gradient(to right, #f5d9b0, #eab676) !important;
+        color: #000;
+    }
+
+    .current-user {
+        background-color: #d4edda !important;
+        font-weight: bold;
+        position: relative;
+    }
+
+    .current-user::after {
+        content: "YOU";
+        position: absolute;
+        right: 10px;
+        background-color: #28a745;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .page-item.active .page-link {
+        background-color: #6f42c1;
+        border-color: #6f42c1;
+        color: white;
+    }
+
+    .page-link {
+        color: #6f42c1;
+        font-weight: 500;
+    }
+
+    .alert-info {
+        background-color: #e0f7fa;
+        border-left: 4px solid #00bcd4;
+        color: #00796b;
+        font-weight: 500;
+    }
+
+    h2 {
+        color: #343a40;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .notification-header {
+        font-weight: 700;
+        background-color: #6f42c1;
+        color: white;
+        padding: 10px;
+    }
+
+    .notification-item {
+        background-color: #f5f5f5;
+        margin: 5px 0;
+        border-left: 4px solid #6f42c1;
+        padding: 8px 10px;
+    }
+
+    .clear-btn {
+        background-color: #dc3545;
+        border: none;
+        margin-top: 10px;
+    }
+
+    .toggle-switch {
+        background-color: #e0e0e0;
+        border-radius: 20px;
+    }
+
+    .bx.bx-moon.icon.moon, .bx.bx-sun.icon.sun {
+        font-size: 1.2rem;
+        color: #6f42c1;
+    }
+
+    .nav-link a {
+        transition: all 0.3s ease;
+    }
+
+    .nav-link a:hover {
+        background-color: #f0e6ff;
+        border-radius: 10px;
+    }
+
+    .nav-text {
+        font-weight: 500;
+        color: #343a40;
+    }
+
+    .notification-badge {
+        background-color: #ff4081;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+    .table {
+    background-color: var(--toogle-colo);
+}
+</style>
 </head>
 
 <body>
