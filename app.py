@@ -5,8 +5,10 @@ import os
 from werkzeug.utils import secure_filename
 from dbhelper import (
                     insert_student, get_student, update_user, search_active_student, list_labs,list_purposes,sitin_student, 
-                    list_current_sitin,logout_student,post_announcement, get_all_data,delete_student_by_id,search_student_info,
-                    reset_all_sessions,get_history,create_feedback,profile_viewing, get_announcements, clear_notification
+                    list_current_sitin,logout_student,post_announcement, get_all_data,get_leaderboard,resset_session_per_student,search_student_info,
+                    reset_all_sessions,get_history,create_feedback,profile_viewing, get_announcements, clear_notification, insert_resources,delete_some_resources,truncate_table,
+                    display_pc,post_pc_status,display_student_records,display_available_pc,insert_reservation,display_reservation,display_reservation_request,
+                    approve_reservation_request,display_reservation_logs,student_notification_list
                     )
 import json
 from fuzzywuzzy import fuzz
@@ -110,8 +112,8 @@ def dashboard():
     
     if "record" in session: 
         record = session["record"]
+        idno = record[0]
         role = ""
-        print(record)
         for value in record: 
             if value in ['Admin', 'Student']: 
                 role = value
@@ -119,8 +121,9 @@ def dashboard():
         if role == 'Admin': 
             return redirect(url_for('announcement_template'))
         else: 
+            notifications = student_notification_list(idno)
             announcement = get_all_data('display_announcements')
-            return render_template('dashboard.html', record = record, announcement = announcement)
+            return render_template('dashboard.html', record = record, announcement = announcement, notifications=notifications)
     return redirect(url_for('login_template'))
 
 
@@ -133,7 +136,8 @@ def edit_profile_template():
         idno = session["record"][0]
         record = profile_viewing(idno)
         print(record)
-        return render_template('edit-profile.html',record=record)
+        notifications = student_notification_list(idno)
+        return render_template('edit-profile.html',record=record, notifications=notifications)
     return redirect(url_for('login'))
 
 @app.route("/update_profile", methods=["POST"])
@@ -230,7 +234,8 @@ def history_table_temp():
 
         idno = session["record"][0] if "record" in session else []
         student = get_history(idno)
-        return render_template('history.html' ,student = student)
+        notifications = student_notification_list(idno)
+        return render_template('history.html' ,student = student, notifications=notifications)
     return redirect(url_for('login'))
 
 @app.route('/history/create-feedback', methods=['POST'])
@@ -250,16 +255,18 @@ def post_feedback():
 def feedback_template(): 
     hasSession = check_session()
     if hasSession:
+        notifications = get_announcements()
         student = get_all_data('display_feedabacks')
         
-        return render_template('feedback.html',student = student)
+        return render_template('feedback.html',student = student, notifications=notifications)
     return redirect(url_for('logout'))
 
 @app.route('/sitin')
 def sitin_template(): 
     hasSession = check_session()
     if hasSession:
-        return render_template('sitin.html', **get_sitin_context())
+        notifications = get_announcements()
+        return render_template('sitin.html', **get_sitin_context(), notifications=notifications)
     return redirect(url_for('login'))
 
 @app.route('/sitin/search', methods=['GET'])
@@ -293,11 +300,13 @@ def submit_sitin():
 @app.route('/sitin/end-session', methods=['POST'])
 def end_session(): 
     value = request.form['idno'] # our key should be int
+    point = request.form['add_point'] # our key should be int
     print(value)
+    print(point)
     if not value: 
         return "wala nakuha"
     print(value)
-    logout_student(value) # Get the sitin module and [idno] -> key [0] value
+    logout_student(value,point) # Get the sitin module and [idno] -> key [0] value
     flash("Session ended.", "success")
     return redirect(url_for('sitin_template')) 
 
@@ -308,7 +317,8 @@ def sitin_records_template():
 
         context = get_sitin_context()
         records = context["history"]
-        return render_template('sitin_history.html', records = records)
+        notifications = get_announcements()
+        return render_template('sitin_history.html', records = records, notifications=notifications)
     return redirect(url_for('login'))
 
 @app.route('/sitin/daily-record')
@@ -317,7 +327,8 @@ def sitin_daily_reports():
     if hasSession:  
         context = get_sitin_context()
         records = context["daily-history"]
-        return render_template('daily-sitin.html', records = records)
+        notifications = get_announcements()
+        return render_template('daily-sitin.html', records = records, notifications=notifications)
     return redirect(url_for('login'))
 
 # This is the module in sitin page
@@ -361,15 +372,16 @@ def clear_notifications():
 def students_record_template(): 
     hasSession = check_session()
     if hasSession: 
+        notifications = get_announcements()
         students = get_all_data('student_information')
-        return render_template('student-record.html', students = students)
+        return render_template('student-record.html', students = students, notifications=notifications)
     return redirect(url_for('login'))
 
-@app.route('/list-of-studentsts/deleted', methods = ['POST'])
-def delete_student(): 
+@app.route('/list-of-studentsts/reset-sessions', methods = ['POST'])
+def reset_per_student(): 
     idno = request.form['idno']
     print(idno)
-    delete_student_by_id(idno)
+    resset_session_per_student(idno)
     return redirect(url_for('students_record_template'))
     
 @app.route('/list-of-studentsts/searched_by_id', methods = ['GET'])
@@ -415,8 +427,423 @@ def reset_sessions():
     return students_record_template()
 
 
+@app.route('/resource-uploader')
+def resource_template(): 
+    hasSession = check_session()
+    if hasSession:
+        notifications = get_announcements()
+        data = get_all_data('resources')
+        link_dict = {}
+        file_dict = {}
 
- # Pass as query parameter
+        print (data)
+        for key, value in data.items():
+            # Unpack tuple: (_, title, description, file_path_or_link, type_)
+            idno, title, description, file_path_or_link, type_ = value
+            
+            if type_ == "Link":
+                link_dict[key] = (idno,title, description, file_path_or_link)
+            elif type_ == "File":
+                # Convert filename to URL path
+                filename = os.path.basename(file_path_or_link)
+                url_path = f'/static/upload_files/{filename}'
+                file_dict[key] = (idno,title, description, url_path)
+                
+        return render_template('resource_uploader.html', file_dict = file_dict, link_dict = link_dict, notifications=notifications)
+    return redirect(url_for('login'))
+
+@app.route('/delete_resource/<int:idno>', methods=['POST'])
+def handle_resource_deletion(idno):
+    if not check_session():
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        # Call your existing database helper function
+        success = delete_some_resources(idno)
+        
+        if success:
+            return jsonify({'success': True, 'message': 'Resource deleted successfully'})
+        else:
+            return jsonify({'success': False, 'message': 'Failed to delete resource'}), 400
+            
+    except Exception as e:
+        print(f"Error deleting resource {idno}: {str(e)}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/lab_resources')
+def lab_resources_template():
+
+    hasSession = check_session()
+    if hasSession:
+        idno = session["record"][0]
+        notifications = student_notification_list(idno)
+        data = get_all_data('resources')
+        link_dict = {}
+        file_dict = {}
+
+        print (data)
+        for key, value in data.items():
+            # Unpack tuple: (_, title, description, file_path_or_link, type_)
+            _, title, description, file_path_or_link, type_ = value
+            
+            if type_ == "Link":
+                link_dict[key] = ( title, description, file_path_or_link)
+            elif type_ == "File":
+                # Convert filename to URL path
+                filename = os.path.basename(file_path_or_link)
+                url_path = f'/static/upload_files/{filename}'
+                file_dict[key] = (title, description, url_path)
+                
+        return render_template('resource_viewer.html', file_dict=file_dict, link_dict=link_dict, notifications=notifications)
+    return redirect(url_for('login'))
+
+
+
+@app.route('/lab-schedule')
+def lab_schedule_template(): 
+    hasSession = check_session()
+    if hasSession: 
+        idno = session["record"][0]
+        notifications = student_notification_list(idno)
+        return render_template('lab_schedule.html', notifications=notifications)
+    return redirect(url_for('login'))
+
+@app.route('/leaderboard')
+def leaderboard_template(): 
+    hasSession = check_session()
+    if hasSession: 
+        idno = session["record"][0]
+        leaderboard = get_leaderboard()
+        print(leaderboard)
+        return render_template('leaderboard.html', leaderboard = leaderboard, idno = idno)
+    return redirect(url_for('login'))
+
+@app.route('/leaderboard_admin')
+def leaderboard_admin_template(): 
+    hasSession = check_session()
+    if hasSession: 
+        idno = session["record"][0]
+        leaderboard = get_leaderboard()
+        notifications = get_announcements()
+        print(leaderboard)
+        return render_template('leaderboard_admin.html', leaderboard = leaderboard, idno = idno, notifications=notifications)
+    return redirect(url_for('login'))
+
+UPLOAD_FOLDER_2 = os.path.join('static', 'upload_files')
+os.makedirs(UPLOAD_FOLDER_2, exist_ok=True)
+
+
+def is_upload_folder_empty():
+    # Returns True if UPLOAD_FOLDER_2 is empty (no files), False otherwise
+    return not any(os.scandir(UPLOAD_FOLDER_2))
+
+@app.route('/save_upload', methods=['POST'])
+def submit_upload():
+    response_data = {
+        'status': 'success',
+        'message': '',
+        'saved_files': [],
+        'existing_files': [],
+        'links': []
+    }
+    
+    file_dictionary = {}
+    link_dictionary = {}
+    
+    try:
+        # Check if upload folder is empty before processing
+        if is_upload_folder_empty():
+            truncate_table()  # Call your truncate function here
+        
+        if 'files' in request.files:
+            uploaded_files = request.files.getlist('files')
+            file_titles = request.form.getlist('file_titles')
+            file_descriptions = request.form.getlist('file_descriptions')
+            
+            if uploaded_files and any(f.filename != '' for f in uploaded_files):
+                print("\nReceived Files:")
+                for i, file in enumerate(uploaded_files):
+                    if file.filename == '':
+                        continue
+                    
+                    filename = secure_filename(file.filename)
+                    current_file_path = os.path.join(UPLOAD_FOLDER_2, filename)
+                    current_title = file_titles[i] if i < len(file_titles) else filename
+                    current_description = file_descriptions[i] if i < len(file_descriptions) else ''
+                    
+                    if not file_dictionary:
+                        file_dictionary = {
+                            'file_title': current_title,
+                            'description': current_description,
+                            'file_path': filename,
+                            'type': 'File'
+                        }
+                    
+                    print("File:")
+                    print(f"Title: {current_title}")
+                    print(f"Description: {current_description}")
+                    print(f"Path: {current_file_path}\n")
+                    
+                    if os.path.exists(current_file_path):
+                        response_data['existing_files'].append({
+                            'filename': filename,
+                            'message': f'File already exists: {filename}'
+                        })
+                        continue
+                    
+                    file.save(current_file_path)
+                    response_data['saved_files'].append({
+                        'title': current_title,
+                        'description': current_description,
+                        'filename': filename,
+                        'path': f'/static/upload_files/{filename}'
+                    })
+
+        # ... rest of your existing code for links and response handling ...
+          # Process links
+        if 'links' in request.form:
+            try:
+                links = json.loads(request.form.get('links', '[]'))
+                
+                if links:  # Only process if links array is not empty
+                    print("\nReceived Links:")
+                    for i, link in enumerate(links):
+                        # Only store the first link
+                        if not link_dictionary:
+                            link_dictionary = {
+                                'link_title': link.get('title', 'Untitled Link'),
+                                'description': link.get('description', ''),
+                                'link': link.get('path', ''),
+                                'type': 'Link'
+                            }
+                        
+                        # Print link information
+                        print("Link:")
+                        print(f"Title: {link.get('title', 'Untitled Link')}")
+                        print(f"Description: {link.get('description', '')}")
+                        print(f"Path: {link.get('path', '')}\n")
+                    
+                    response_data['links'] = [{
+                        'path': link.get('path', ''),
+                        'title': link.get('title', 'Untitled Link'),
+                        'description': link.get('description', '')
+                    } for link in links]
+                    
+            except json.JSONDecodeError as e:
+                print(f"Error parsing links JSON: {str(e)}")
+                response_data['links'] = []
+        if file_dictionary:
+            insert_resources(**file_dictionary)
+        
+        if link_dictionary:
+            insert_resources(**link_dictionary)
+        
+        if response_data['existing_files']:
+            if response_data['saved_files']:
+                response_data['message'] = 'Some files were uploaded, but some already existed'
+            else:
+                response_data['message'] = 'All files already exist'
+                response_data['status'] = 'warning'
+        else:
+            response_data['message'] = 'Files and links uploaded successfully'
+
+        return jsonify(response_data), 200
+
+    except Exception as e:
+        print(f"Error during upload: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+@app.route('/pc_monitor')
+def pc_monitor_template(): 
+    hasSession = check_session()
+    if hasSession: 
+        data = display_pc()  # List of (pc_id, lab_id, status)
+        grouped = {}
+        for pc_id, lab_id, status in data:
+            grouped.setdefault(lab_id, []).append((pc_id, status))
+        lab_ids = sorted(grouped.keys())
+        return render_template('pc-monitoring.html', grouped=grouped, lab_ids=lab_ids)
+    return redirect(url_for('login'))
+
+@app.route('/update_pc_status', methods=['POST'])
+def update_pc_status():
+    data = request.get_json()
+    if isinstance(data, dict):
+        # Grouped update (from set all)
+        lab_id = data.get('lab_id')
+        pc_ids = data.get('pc_ids')
+        status = data.get('status')
+        if pc_ids:
+            pc_ids_str = ",".join(str(pc_id) for pc_id in pc_ids)
+        print(post_pc_status(lab_id, pc_ids_str, status))
+    elif isinstance(data, list):
+        # Single or multiple individual updates
+        print("Individual update(s):")
+        for item in data:
+            lab_id = item.get('lab_id')
+            pc_id = item.get('pc_id')
+            status = item.get('status')
+            print(post_pc_status(lab_id, pc_id, status))
+    else:
+        print("Unknown data format:", data)
+    return jsonify({'status': 'success'})
+
+@app.route('/reservation')
+def reservation_template(): 
+    hasSession = check_session()
+    record = session["record"]  
+    if hasSession: 
+        try:
+            
+            idno = record[0]
+            # print(f"Session ID: {idno}")
+            
+            student_record = display_student_records(idno) or []
+            # print(f"Student Record: {student_record}")
+
+            notifications = student_notification_list(idno)
+            print(f"Notification: {notifications}")
+            
+            lab_data = display_available_pc() or []
+            # print(f"Lab Data: {lab_data}")
+            
+            purpose = list_purposes() or {}
+            # print(f"Purposes: {purpose}")
+            
+            grouped = {}
+            # Process lab data
+            for pc_id, lab_id, status in lab_data:
+                if lab_id is not None:
+                    grouped.setdefault(lab_id, []).append((pc_id, status))
+            # print(f"Grouped Data: {grouped}")
+            
+            lab_ids = sorted(grouped.keys())
+            # print(f"Lab IDs: {lab_ids}")
+            
+            reservations = display_reservation(idno) or []
+            # print(f"Reservations: {reservations}")
+            
+            return render_template('reservation.html', 
+                student_record=student_record,
+                purpose=purpose,
+                lab_ids=lab_ids,
+                grouped=grouped,
+                reservations=reservations,
+                notifications=notifications
+            )
+            
+        except Exception as e:
+            print(f"Error in reservation_template: {str(e)}")
+            return render_template('reservation.html', 
+                student_record=[],
+                purpose={},
+                lab_ids=[],
+                grouped={},
+                reservations=[],
+                notifications=[]
+            )
+    return redirect(url_for('login'))
+
+@app.route('/reservation/submit', methods=['POST'])
+def submit_reservation(): 
+    try:
+        data = request.get_json()
+        
+        # Create reservation data dictionary
+        reservation_data = {
+            'student_id': data.get('idNo'),        # Student ID from request
+            'purpose_id': int(data.get('purpose')), # Convert to int
+            'lab_id': int(data.get('laboratory')),  # Convert to int
+            'pc_id': int(data.get('selectedPC')),   # Convert to int
+            'res_date': data.get('date'),           # Date from request
+            'res_time': data.get('time')            # Time from request
+        }
+        
+        # Validate required fields
+        for key, value in reservation_data.items():
+            if value is None:
+                return jsonify({
+                    'status': 'error',
+                    'message': f'Missing required field: {key}'
+                }), 400
+        
+        # Here you would typically call your database function
+        insert_reservation(**reservation_data)
+        
+        return jsonify({
+            'status': 'success',
+            'message': 'Reservation submitted successfully',
+            'data': reservation_data
+        })
+        
+    except ValueError as e:
+        return jsonify({
+            'status': 'error',
+            'message': 'Invalid data format. Please check your input values.'
+        }), 400
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+@app.route('/reservation_request')
+def reservation_request_template(): 
+    hasSession = check_session()
+    if hasSession: 
+        reservation_request = display_reservation_request()
+        print(f"Reservation Request: {reservation_request}")
+        notifications = get_announcements()
+        return render_template('reservation_request.html', reservation_request=reservation_request, notifications=notifications)
+    return redirect(url_for('login'))
+
+@app.route('/approve_reservation', methods=['POST'])
+def approve_reservation():
+    try:
+        # Check if content type is correct
+        content_type = request.headers.get('Content-Type')
+        if content_type != 'application/json':
+            return jsonify({
+                'status': 'error',
+                'message': 'Content-Type must be application/json'
+            }), 415
+        
+        # Parse JSON data
+        data = request.get_json()
+        
+        # Extract and validate required fields
+        reservation_id = int(data.get('reservation_id'))
+        print(f"Reservation ID: {reservation_id}")
+        status = data.get('status')
+        print(f"Status: {status}")
+        
+        # Here you would add the code to update the database
+        # For example: success = update_reservation_status(reservation_id, status)
+        approve_reservation_request(reservation_id, status)
+        # Return success response
+        return jsonify({
+            'status': 'success',
+            'message': f'Reservation {status} successfully'
+        })
+        
+    except Exception as e:
+        print(f"Error in approve_reservation: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': 'An unexpected error occurred'
+        }), 500
+    
+@app.route('/reservation_logs')
+def reservation_logs_template():
+    reservation_logs = display_reservation_logs()
+    notifications = get_announcements()
+    return render_template('reservation_logs.html', reservation_logs=reservation_logs, notifications=notifications)
+
+
+
 def prevent_cache(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Pragma"] = "no-cache"
@@ -436,4 +863,3 @@ def check_session():
     return False
 if __name__ == "__main__":
     app.run(debug=True)
-

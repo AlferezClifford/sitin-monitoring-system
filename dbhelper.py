@@ -99,8 +99,8 @@ def sitin_student(**kwargs):
     data = post_process(sql)
     return data
 
-def logout_student(idno: str): 
-    sql = f"CALL end_session('{idno}', NOW())"
+def logout_student(idno: str, point:int): 
+    sql = f"CALL end_session('{idno}', '{point}', NOW())"
     return post_process(sql)
 
 def post_announcement(admin_id,content:str): 
@@ -126,7 +126,7 @@ def get_history(idno):
 
 def list_purposes(): 
     sql = "SELECT * FROM purpose ORDER BY 1"
-    data = get_process(sql)
+    data = get_process(sql) 
     purposes = dict(data)
     return purposes
 
@@ -153,6 +153,10 @@ def reset_all_sessions():
     sql = "UPDATE students set student_session = 30"
     return post_process(sql)
 
+def resset_session_per_student(idno:str): 
+    sql = f"UPDATE students set student_session = 30 WHERE idno = '{idno}'"
+    return post_process(sql)
+ 
 def create_feedback(idno:int,  feedback:str, has_profanity:bool): 
     sql = f"CALL create_feedback({idno},'{feedback}', {has_profanity})"
 
@@ -172,7 +176,7 @@ def profile_viewing(idno:str):
         print("wala naka kuha")
     return data
 def get_announcements(): 
-    sql = "SELECT message FROM notifications WHERE status = 'unread' ORDER BY created_at DESC; "
+    sql = "SELECT message FROM notifications WHERE status = 'unread' AND notification_type NOT IN ('Reservation') ORDER BY created_at DESC; "
     notifications = get_process(sql)
     result = list_to_dict(notifications)
     if not result:
@@ -186,5 +190,69 @@ def clear_notification(status: str):
         return success
     return success
 
+def insert_resources(**kwargs): 
+    values = list(kwargs.values())
+    format = ", ".join(f"'{x}'" if isinstance(x,str) else str(x) for x in values) 
+    sql = f"CALL add_resources({format})"
+    success = post_process(sql)
+    if success: 
+        print (f"Success {format}")
+    return format
+def truncate_table(): 
+    sql = "TRUNCATE TABLE resources"
+    return post_process(sql)
+
+def get_leaderboard(): 
+    sql = "SELECT * FROM leaderboard ORDER BY 4 DESC"
+    test = get_process(sql)
+    results = list_to_dict(test)
+    return results
+
+def delete_some_resources(idno: str): 
+    sql = f"DELETE FROM resources WHERE resource_id = {idno}"
+    return post_process(sql)
+
+def post_pc_status(lab_id: int, pc_ids: str, status: str):
+    sql = f"CALL updatestatus({lab_id}, '{pc_ids}', '{status}')"
+    print(sql)
+    return post_process(sql)
+
+def display_pc(): 
+    sql = "SELECT * FROM pcs"
+    return get_process(sql)
+
+def display_available_pc(): 
+    sql = "SELECT * FROM pcs WHERE status = 'Available'"
+    return get_process(sql)
+
+def display_student_records(idno: str): 
+    sql = f"SELECT idno, name, student_session FROM student_information WHERE idno = {idno}"
+    return get_process(sql)
+
+def insert_reservation(**kwargs):
+    values = list(kwargs.values())
+    format = ", ".join(f"'{x}'" if isinstance(x,str) else str(x) for x in values)
+    sql = f"CALL add_reservation({format})"
+    return post_process(sql)
+def display_reservation(idno: str):
+    sql = f"SELECT type_of_purpose, lab_id, pc_id, res_date, reserv_time, status FROM display_reservation WHERE idno = '{idno}' ORDER BY reserv_id DESC"
+    return get_process(sql)
+
+def display_reservation_request():
+    sql = f"SELECT reserv_id, idno, name, type_of_purpose, lab_id, pc_id, reserv_time, res_date FROM display_reservation WHERE status = 'pending' ORDER BY reserv_id DESC"
+    return get_process(sql)
+
+def approve_reservation_request(reservation_id: int, status: str):
+    sql = f"CALL update_reservation({reservation_id}, '{status}')"
+    print(sql)
+    return post_process(sql)
+
+def display_reservation_logs():
+    sql = "SELECT idno, name, type_of_purpose, lab_id, pc_id, reserv_time, res_date, status FROM display_reservation WHERE status NOT IN ('Pending') ORDER BY reserv_id DESC"
+    return get_process(sql)
+
+def student_notification_list(user_id): 
+    sql = f"SELECT message FROM notifications WHERE status = 'unread' AND user_id = '{user_id}' AND notification_type = 'Reservation' ORDER BY created_at DESC"
+    return get_process(sql)
 if __name__ == "__main__":
     get_announcements()

@@ -1,0 +1,646 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratories</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
+    <link rel="stylesheet" href="../static/css/dashboard-style.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+        }
+
+        .main-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto 2rem auto;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            background: var(--card-bg);
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+        }
+
+        .card-header h4 {
+            font-weight: 600;
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .controls-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .form-select {
+            border-radius: 8px;
+            padding: 0.75rem;
+            border: 1px solid #e0e0e0;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0.9;
+        }
+
+        .pc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+            padding: 1rem;
+            max-height: 600px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .pc-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .pc-item::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+
+        .pc-item:active::after {
+            width: 200%;
+            height: 200%;
+        }
+
+        .status-change-animation {
+            animation: statusChange 0.5s ease;
+        }
+
+        @keyframes statusChange {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .pc-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .pc-available {
+            background: linear-gradient(135deg, var(--success-color), #27ae60);
+        }
+
+        .pc-unavailable {
+            background: linear-gradient(135deg, var(--danger-color), #c0392b);
+        }
+
+        .pc-item i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .pc-number {
+            font-size: 1.1rem;
+        }
+
+        .status-indicator {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        @media (max-width: 768px) {
+            .contentDiv {
+                margin-left: 0;
+                padding: 10px;
+            }
+
+            .sidebar:not(.close) + .contentDiv {
+                margin-left: 0;
+            }
+
+            .pc-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 15px;
+            }
+
+            .btn {
+                padding: 0.5rem 1rem;
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+
+            .controls-section {
+                padding: 1rem;
+            }
+
+            .row {
+                flex-direction: column;
+            }
+
+            .col-md-6 {
+                width: 100%;
+            }
+        }
+
+        .pc-grid::-webkit-scrollbar {
+            width: 10px;
+        }
+        .pc-grid::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="ParentDivContainer">
+        <div>
+            <nav class="sidebar close">
+                <header>
+                    <div class="image-text">
+                        <span class="image">
+                            <img src="../static/imgs/PSITS_LOGO.png" alt="logo">
+                        </span>
+                        <div class="text header-text">
+                            <span class="name">Sitin-Monitoring</span>
+                            <span class="prefession">Project</span>
+                        </div>
+                    </div>
+
+                    <i class="bx bx-chevron-right toggle"></i>
+                </header>
+                <div class="menu-bar">
+                    <div class="menu">
+                        <ul class="menu-links">
+                            <li class="nav-link">
+                                <a href="{{url_for('announcement_template')}}">
+                                    <i class='bx bx-home-alt icon' ></i>
+                                    <span class="text nav-text ">Anouncement</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('students_record_template')}}">
+                                    <i class='bx bxs-megaphone  icon' ></i>
+                                    <span class="text nav-text ">Students</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_template')}}">
+                                    <i class='bx bx-chair icon' ></i>
+                                    <span class="text nav-text">Sitin</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_records_template')}}">
+                                    <i class='bx bx-calendar-check icon'  ></i>
+                                    <span class="text nav-text">Sitin Reports</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_daily_reports')}}">
+                                    <i class='bx bx-pie-chart icon'  ></i>
+                                    <span class="text nav-text">View Sitin-Records</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('feedback_template')}}">
+                                    <i class='bx bxs-report icon'></i>
+                                    <span class="text nav-text">Feedbacks Records</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('resource_template')}}">
+                                    <i class='bx bx-cloud-upload icon'></i>
+                                    <span class="text nav-text">Lab Resources Uploader</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('leaderboard_admin_template')}}">
+                                    <i class='bx bxs-bar-chart-alt-2 icon'></i>
+                                    <span class="text nav-text">Leaderboards</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('reservation_request_template')}}">
+                                    <i class="fa-regular fa-calendar-days icon"></i>
+                                    <span class="text nav-text">Reservation Request</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('reservation_logs_template')}}">
+                                    <i class="fa-solid fa-table-list icon"></i>
+                                    <span class="text nav-text">Reservation Logs</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('pc_monitor_template')}}">
+                                    <i class="fa-solid fa-desktop icon"></i>
+                                    <span class="text nav-text">Comlab Management</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom-content">
+                        <li class="">
+                            <a href="{{url_for('logout')}}">
+                                <i class='bx bx-log-out icon' id="logout-btn"></i>
+                                <span class="text nav-text">Logout</span>
+                            </a>
+                        </li>
+                        <li class="mode">
+                            <div class="moon-sun">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun  icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark Mode</span>
+                            <div class="toggle-switch"> 
+                                <span class="switch"></span>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="contentDiv" style="margin-left: 30px;">
+            <div class="topNavigation">
+                <div class="items item1 text"> 
+                    <div class="notification-container">
+                        <i class='bx bxs-bell icon' id="notificationIcon"></i>
+                        <span class="notification-badge" id="notificationCount">{% if notifications %}{{ notifications|length }}{% else %}0{% endif %}</span>
+                        <div class="notification-box" id="notificationBox" style="display: none;">
+                            <div class="notification-header">🔔 Notifications</div>
+                            <div id="notificationList">
+                                {% if not notifications %}
+                                    <strong style="font-size: 15px;">No notification available</strong>
+                                {% else %}
+                                    {% for notification in notifications %}
+                                        <div class="notification-item alert alert-info">📢{{ notification[0] }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <button class="btn btn-danger btn-sm clear-btn" id="clearNotifications">Clear All</button>
+                        </div>
+                    </div>
+                    <div><h2>Profile</h2></div>
+                </div>
+            </div>
+            <div class="main-container">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class='bx bx-desktop'></i> PC Monitoring System</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="controls-section">
+                            <div class="row align-items-center">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <select class="form-select" id="labSelect">
+                                        <option value="">Select Laboratory</option>
+                                        {% for lab_id in lab_ids %}
+                                            <option value="{{ lab_id }}">Laboratory {{ lab_id }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 d-flex gap-2">
+                                    <button class="btn btn-success flex-grow-1" onclick="setAllAvailable()">
+                                        <i class='bx bx-check-circle'></i> Set All Available
+                                    </button>
+                                    <button class="btn btn-danger flex-grow-1" onclick="setAllUnavailable()">
+                                        <i class='bx bx-x-circle'></i> Set All Unavailable
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% for lab_id in lab_ids %}
+                            <div class="lab-section" id="lab-{{ lab_id }}" style="display: none;">
+                                <h5>Laboratory {{ lab_id }}</h5>
+                                <div class="pc-grid">
+                                    {% for pc_id, status in grouped[lab_id] %}
+                                        <div class="pc-item {{ 'pc-available' if status == 'Available' else 'pc-unavailable' }}" data-pc-id="{{ pc_id }}" data-lab-id="{{ lab_id }}">
+                                            <i class="bx {{ 'bx-check' if status == 'Available' else 'bx-x' }}"></i>
+                                            <div class="pc-number">PC {{ pc_id }}</div>
+                                            <div class="status-indicator">{{ status }}</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="toast-container" id="toastContainer"></div>
+        </div>
+    </div>
+</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/darkmode.js"></script> 
+    <script>
+        let pcStatuses = {};
+        let currentLabId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            pcStatuses = {};
+            document.querySelectorAll('.pc-item').forEach(item => {
+                const pcId = item.getAttribute('data-pc-id');
+                const status = item.querySelector('.status-indicator').textContent.trim();
+                pcStatuses[pcId] = status;
+                item.onclick = function() { togglePCStatus(this); };
+            });
+        });
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="bx ${type === 'success' ? 'bx-check-circle' : 'bx-x-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            const container = document.getElementById('toastContainer');
+            container.appendChild(toast);
+            
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function togglePCStatus(pcElement) {
+            const pcId = pcElement.getAttribute('data-pc-id');
+            const labId = pcElement.getAttribute('data-lab-id');
+            const currentStatus = pcStatuses[pcId];
+            const newStatus = currentStatus === 'Available' ? 'Not Available' : 'Available';
+
+            if (pcElement) {
+                // Update stored status
+                pcStatuses[pcId] = newStatus;
+
+                // Add click animation
+                pcElement.classList.add('status-change-animation');
+
+                // Update status after a short delay
+                setTimeout(() => {
+                    pcElement.className = `pc-item ${newStatus === 'Available' ? 'pc-available' : 'pc-unavailable'} status-change-animation`;
+                    pcElement.innerHTML = `
+                        <i class="bx ${newStatus === 'Available' ? 'bx-check' : 'bx-x'}"></i>
+                        <div class="pc-number">PC ${pcId}</div>
+                        <div class="status-indicator">${newStatus}</div>
+                    `;
+
+                    // Show toast notification
+                    showToast(`PC ${pcId} is now ${newStatus.toLowerCase()}`);
+
+                    // Remove animation class after animation completes
+                    setTimeout(() => {
+                        pcElement.classList.remove('status-change-animation');
+                    }, 500);
+
+                    // Send data to backend every click
+                    fetch('/update_pc_status', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify([
+                            {
+                                lab_id: labId,
+                                pc_id: pcId,
+                                status: newStatus
+                            }
+                        ])
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Optionally handle response
+                    })
+                    .catch(error => {
+                        console.error('Error updating PC status:', error);
+                    });
+                }, 150);
+            }
+        }
+
+        function setAllAvailable() {
+            const labSection = document.querySelector('.lab-section.active-lab');
+            if (!labSection) {
+                alert('Please select a laboratory first');
+                return;
+            }
+            const labId = labSection.id.replace('lab-', '');
+            const pcIds = [];
+            labSection.querySelectorAll('.pc-item').forEach(pcElement => {
+                const pcId = pcElement.getAttribute('data-pc-id');
+                pcStatuses[pcId] = 'Available';
+                pcElement.className = 'pc-item pc-available';
+                pcElement.innerHTML = `
+                    <i class="bx bx-check"></i>
+                    <div class="pc-number">PC ${pcId}</div>
+                    <div class="status-indicator">Available</div>
+                `;
+                pcElement.onclick = function() { togglePCStatus(this); };
+                pcIds.push(pcId);
+            });
+            // Send grouped update to backend
+            fetch('/update_pc_status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lab_id: labId, pc_ids: pcIds, status: 'Available' })
+            });
+            showToast('All PCs are now available');
+        }
+
+        function setAllUnavailable() {
+            const labSection = document.querySelector('.lab-section.active-lab');
+            if (!labSection) {
+                alert('Please select a laboratory first');
+                return;
+            }
+            const labId = labSection.id.replace('lab-', '');
+            const pcIds = [];
+            labSection.querySelectorAll('.pc-item').forEach(pcElement => {
+                const pcId = pcElement.getAttribute('data-pc-id');
+                pcStatuses[pcId] = 'Not Available';
+                pcElement.className = 'pc-item pc-unavailable';
+                pcElement.innerHTML = `
+                    <i class="bx bx-x"></i>
+                    <div class="pc-number">PC ${pcId}</div>
+                    <div class="status-indicator">Not Available</div>
+                `;
+                pcElement.onclick = function() { togglePCStatus(this); };
+                pcIds.push(pcId);
+            });
+            // Send grouped update to backend
+            fetch('/update_pc_status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lab_id: labId, pc_ids: pcIds, status: 'Not Available' })
+            });
+            showToast('All PCs are now not available');
+        }
+
+        // Initialize event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            const labSelect = document.getElementById('labSelect');
+            labSelect.addEventListener('change', (e) => {
+                loadPCs(e.target.value);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const labSelect = document.getElementById('labSelect');
+            const labSections = document.querySelectorAll('.lab-section');
+
+            labSelect.addEventListener('change', function() {
+                const selectedLab = labSelect.value;
+                labSections.forEach(section => {
+                    if (!selectedLab) {
+                        section.style.display = 'none';
+                        section.classList.remove('active-lab');
+                    } else if (section.id === 'lab-' + selectedLab) {
+                        section.style.display = '';
+                        section.classList.add('active-lab');
+                    } else {
+                        section.style.display = 'none';
+                        section.classList.remove('active-lab');
+                    }
+                });
+            });
+
+            // Optionally, show the first lab by default
+            // if (labSections.length > 0) {
+            //     labSections[0].style.display = '';
+            // }
+        });
+
+        function sendPCStatus(labId, pcId, status) {
+            fetch('/update_pc_status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify([{ lab_id: labId, pc_id: pcId, status: status }])
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server response:', data);
+            });
+        }
+    </script>
+    <script src="../static/notification.js"></script>
+</html>
+    

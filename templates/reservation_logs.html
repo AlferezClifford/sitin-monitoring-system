@@ -3,20 +3,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap 5 JS (Popper Included) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
     <link rel="stylesheet" href="../static/css/dashboard-style.css">
-    
 </head>
 <body>
-    
     <div class="ParentDivContainer">
         <div>
             <nav class="sidebar close">
@@ -57,7 +53,7 @@
                             <li class="nav-link">
                                 <a href="{{url_for('sitin_records_template')}}">
                                     <i class='bx bx-calendar-check icon'  ></i>
-                                    <span class="text nav-text">Sitin Records</span>
+                                    <span class="text nav-text">Sitin Reports</span>
                                 </a>
                             </li>
                             <li class="nav-link">
@@ -85,7 +81,7 @@
                                 </a>
                             </li>
                             <li class="nav-link">
-                                <a href="{{url_for('reservation_request_template')}}">
+                              <a href="{{url_for('reservation_request_template')}}">
                                     <i class="fa-regular fa-calendar-days icon"></i>
                                     <span class="text nav-text">Reservation Request</span>
                                 </a>
@@ -148,14 +144,14 @@
                     <div><h2>Profile</h2></div>
                 </div>
             </div>
-            <div class="sitin-container" >
-                <div class="item-3">
-                    <div style="margin-bottom: 40px;">
-                        <h1>Feedbacks</h1>
+            <div class="sitin-container" style="justify-content: center;">
+                <div class="item-2" style=" width: 100%;">
+                    <div style="margin-bottom: 30px;">
+                        <h1>Reservation Logs</h1>
+                        <hr>
                     </div>
+                    
                     <div class="input-group marg" style="display: flex; justify-content: space-between;">
-                        <div class="dropdown-group">
-                        </div>
                         <div class="col-3 " id = "search_btn" > <!-- Adjust the number for different widths -->
                             <input type="search" class="form-control" id="searchInput" placeholder="Search" aria-label="Search" onkeyup="searchTable()">
                             <button class="btn btn-primary" type="submit">
@@ -165,30 +161,21 @@
                     </div>
                     <table class="table" id="sitInTable">
                         <thead style="text-align: center;">
-                          <tr>
-                            <th scope="col">Idno</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Course</th>
-                            <th scope="col">Lab</th>
-                            <th scope="col">Login</th>
-                            <th scope="col">Logout</th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Message</th>
-                          </tr>
-                          <hr>
-                        </thead>
-                       
-                        <tbody style="text-align: center;">
-                            {% for value in student.values() %}
                             <tr>
-                                {% for record in value[1:] %}
-                                    <td>{{record}}</td>
-                                {% endfor %}
+                                <th scope="col">ID Number</th>
+                                <th scope="col">Student Name</th>
+                                <th scope="col">purpose</th>
+                                <th scope="col">Laboratory</th>
+                                <th scope="col">PC Number</th>
+                                <th scope="col">Reservation Time In</th>
+                                <th scope="col">Reservation Date</th>
+                                <th scope="col">Status</th>
                             </tr>
-                        {% endfor %}                        
+                        </thead>
+                        <tbody id="tableBody" style="text-align: center;">
                         </tbody>
-                      </table>
-                      <div id="pagination">
+                    </table>
+                    <div id="pagination">
                         <button onclick="prevPage()" class="btn btn-primary">Previous</button>
                         <span id="pageInfo"></span>
                         <button onclick="nextPage()" class="btn btn-primary">Next</button>
@@ -197,10 +184,132 @@
             </div>
         </div>
     </div>
-
-  
 </body>
 <script>
+    // Fetch and display reservation logs data
+    document.addEventListener('DOMContentLoaded', function() {
+        const tableBody = document.getElementById('tableBody');
+        const reservationLogs = {{ reservation_logs|tojson }};
+        
+        // Clear existing table data
+        tableBody.innerHTML = '';
+        
+        // Add reservation logs to table
+        reservationLogs.forEach(log => {
+            const row = document.createElement('tr');
+            
+            // Create cells for each data field
+            const idCell = document.createElement('td');
+            idCell.textContent = log[0];
+            
+            const nameCell = document.createElement('td');
+            nameCell.textContent = log[1];
+            
+            const purposeCell = document.createElement('td');
+            purposeCell.textContent = log[2];
+            
+            const labCell = document.createElement('td');
+            labCell.textContent = log[3];
+            
+            const pcCell = document.createElement('td');
+            pcCell.textContent = log[4];
+            
+            const timeCell = document.createElement('td');
+            timeCell.textContent = log[5];
+            
+            const dateCell = document.createElement('td');
+            // Format the date to "Month DD, YYYY" format
+            dateCell.textContent = formatDateToLongForm(log[6]);
+            
+            const statusCell = document.createElement('td');
+            statusCell.textContent = log[7];
+            
+            // Apply color coding based on status
+            applyStatusStyle(statusCell, log[7]);
+            
+            // Append all cells to the row
+            row.appendChild(idCell);
+            row.appendChild(nameCell);
+            row.appendChild(purposeCell);
+            row.appendChild(labCell);
+            row.appendChild(pcCell);
+            row.appendChild(timeCell);
+            row.appendChild(dateCell);
+            row.appendChild(statusCell);
+            
+            // Add row to table body
+            tableBody.appendChild(row);
+        });
+        
+        // Initialize pagination after data is loaded
+        displayTablePage(1);
+    });
+    
+    // Function to format date to "Month DD, YYYY" format
+    function formatDateToLongForm(dateValue) {
+        // Handle different date formats that might come from the server
+        let date;
+        
+        if (typeof dateValue === 'string') {
+            // If it's a string (like "2025-05-16" or ISO format)
+            date = new Date(dateValue);
+        } else if (dateValue && typeof dateValue === 'object' && dateValue.hasOwnProperty('year')) {
+            // If it's a Python datetime object converted to JSON
+            date = new Date(dateValue.year, dateValue.month - 1, dateValue.day);
+        } else {
+            // If format is unknown, return as is
+            return dateValue;
+        }
+        
+        // Check if date is valid
+        if (isNaN(date.getTime())) {
+            return dateValue;
+        }
+        
+        // Format to "Month DD, YYYY"
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June', 
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        
+        const month = months[date.getMonth()];
+        const day = date.getDate();
+        const year = date.getFullYear();
+        
+        return `${month} ${day}, ${year}`;
+    }
+    
+    // Function to apply color coding to status cells
+    function applyStatusStyle(cell, status) {
+        switch(status) {
+            case 'Pending':
+                cell.style.backgroundColor = '#FFF3CD'; // Light yellow
+                cell.style.color = '#856404';
+                cell.style.fontWeight = 'bold';
+                break;
+            case 'Approved':
+                cell.style.backgroundColor = '#D4EDDA'; // Light green
+                cell.style.color = '#155724';
+                cell.style.fontWeight = 'bold';
+                break;
+            case 'Disapproved':
+                cell.style.backgroundColor = '#F8D7DA'; // Light red
+                cell.style.color = '#721C24';
+                cell.style.fontWeight = 'bold';
+                break;
+            case 'Currently Sitin':
+                cell.style.backgroundColor = '#CCE5FF'; // Light blue
+                cell.style.color = '#004085';
+                cell.style.fontWeight = 'bold';
+                break;
+            case 'Completed':
+                cell.style.backgroundColor = '#D6D8D9'; // Light gray
+                cell.style.color = '#1B1E21';
+                cell.style.fontWeight = 'bold';
+                break;
+        }
+    }
+
     function searchTable() {
         let input = document.getElementById("searchInput");
         let filter = input.value.toLowerCase();
@@ -224,59 +333,58 @@
             rows[i].style.display = match ? "" : "none";
         }
     }
+
+    // Pagination 
     let currentPage = 1;
-const rowsPerPage = 5;
+    const rowsPerPage = 5;
 
-function displayTablePage(page) {
-    let table = document.getElementById("sitInTable");
-    let rows = table.getElementsByTagName("tr"); // Get all rows in the table (including header)
-    let totalRows = rows.length - 1; // Exclude the header row
+    function displayTablePage(page) {
+        let table = document.getElementById("sitInTable");
+        let tbody = document.getElementById("tableBody");
+        let rows = tbody.getElementsByTagName("tr");
 
-    let totalPages = Math.ceil(totalRows / rowsPerPage);
-    if (page < 1) page = 1;
-    if (page > totalPages) page = totalPages;
+        let totalPages = Math.ceil(rows.length / rowsPerPage);
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
 
-    // Hide all rows
-    for (let i = 1; i < rows.length; i++) {
-        rows[i].style.display = "none";
+        // Hide all rows
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].style.display = "none";
+        }
+
+        // Show only the rows for the current page
+        for (let i = (page - 1) * rowsPerPage; i < page * rowsPerPage && i < rows.length; i++) {
+            rows[i].style.display = "";
+        }
+
+        // Update page info
+        document.getElementById("pageInfo").innerText = `Page ${page} of ${totalPages}`;
+        currentPage = page;
     }
 
-    // Show only the rows for the current page
-    for (let i = (page - 1) * rowsPerPage + 1; i < page * rowsPerPage + 1 && i < rows.length; i++) {
-        rows[i].style.display = "";
+    function prevPage() {
+        if (currentPage > 1) {
+            displayTablePage(currentPage - 1);
+        }
     }
 
-    // Update page info
-    document.getElementById("pageInfo").innerText = `Page ${page} of ${totalPages}`;
-    currentPage = page;
-}
+    function nextPage() {
+        let table = document.getElementById("sitInTable");
+        let tbody = document.getElementById("tableBody");
+        let rows = tbody.getElementsByTagName("tr");
+        let totalPages = Math.ceil(rows.length / rowsPerPage);
 
-function prevPage() {
-    if (currentPage > 1) {
-        displayTablePage(currentPage - 1);
+        if (currentPage < totalPages) {
+            displayTablePage(currentPage + 1);
+        }
     }
-}
 
-function nextPage() {
-    let table = document.getElementById("sitInTable");
-    let rows = table.getElementsByTagName("tr"); // Get all rows in the table (including header)
-    let totalRows = rows.length - 1; // Exclude the header row
-    let totalPages = Math.ceil(totalRows / rowsPerPage);
-
-    if (currentPage < totalPages) {
-        displayTablePage(currentPage + 1);
-    }
-}
-
-// Initialize table display
-displayTablePage(1);
-    function resetSession() {
-    document.getElementById('remaining_session').value = 30;
-  }
-
+    // Initialize table display
+    displayTablePage(1);
+    
 </script>
-<script src="../static/darkmode.js"></script>
 <script src="../static/notification.js"></script>
+<script src="../static/darkmode.js"></script> 
 </html>
     
     

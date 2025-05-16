@@ -1,0 +1,944 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Resources</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
+    <link rel="stylesheet" href="../static/css/dashboard-style.css">
+</head>
+<body>
+    <div class="ParentDivContainer">
+        <div>
+            <nav class="sidebar close">
+                <header>
+                    <div class="image-text">
+                        <span class="image">
+                            <img src="../static/imgs/PSITS_LOGO.png" alt="logo">
+                        </span>
+                        <div class="text header-text">
+                            <span class="name">Sitin-Monitoring</span>
+                            <span class="prefession">Project</span>
+                        </div>
+                    </div>
+
+                    <i class="bx bx-chevron-right toggle"></i>
+                </header>
+                <div class="menu-bar">
+                    <div class="menu">
+                        <ul class="menu-links">
+                            <li class="nav-link">
+                                <a href="{{url_for('announcement_template')}}">
+                                    <i class='bx bx-home-alt icon' ></i>
+                                    <span class="text nav-text ">Anouncement</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('students_record_template')}}">
+                                    <i class='bx bxs-megaphone  icon' ></i>
+                                    <span class="text nav-text ">Students</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_template')}}">
+                                    <i class='bx bx-chair icon' ></i>
+                                    <span class="text nav-text">Sitin</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_records_template')}}">
+                                    <i class='bx bx-calendar-check icon'  ></i>
+                                    <span class="text nav-text">Sitin Reports</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('sitin_daily_reports')}}">
+                                    <i class='bx bx-pie-chart icon'  ></i>
+                                    <span class="text nav-text">View Sitin-Records</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('feedback_template')}}">
+                                    <i class='bx bxs-report icon'></i>
+                                    <span class="text nav-text">Feedbacks Records</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('resource_template')}}">
+                                    <i class='bx bx-cloud-upload icon'></i>
+                                    <span class="text nav-text">Lab Resources Uploader</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('leaderboard_admin_template')}}">
+                                    <i class='bx bxs-bar-chart-alt-2 icon'></i>
+                                    <span class="text nav-text">Leaderboards</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('reservation_request_template')}}">
+                                    <i class="fa-regular fa-calendar-days icon"></i>
+                                    <span class="text nav-text">Reservation Request</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('reservation_logs_template')}}">                                    <i class="fa-solid fa-table-list icon"></i>
+                                    <span class="text nav-text">Reservation Logs</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('pc_monitor_template')}}">
+                                    <i class="fa-solid fa-desktop icon"></i>
+                                    <span class="text nav-text">Comlab Management</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom-content">
+                        <li class="">
+                            <a href="{{url_for('logout')}}">
+                                <i class='bx bx-log-out icon' id="logout-btn"></i>
+                                <span class="text nav-text">Logout</span>
+                            </a>
+                        </li>
+                        <li class="mode">
+                            <div class="moon-sun">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun  icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark Mode</span>
+                            <div class="toggle-switch"> 
+                                <span class="switch"></span>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="contentDiv" style="margin-left: 30px;">
+            <div class="topNavigation">
+                <div class="items item1 text"> 
+                    <div class="notification-container">
+                        <i class='bx bxs-bell icon' id="notificationIcon"></i>
+                        <span class="notification-badge" id="notificationCount">{% if notifications %}{{ notifications|length }}{% else %}0{% endif %}</span>
+                        <div class="notification-box" id="notificationBox" style="display: none;">
+                            <div class="notification-header">🔔 Notifications</div>
+                            <div id="notificationList">
+                                {% if not notifications %}
+                                    <strong style="font-size: 15px;">No notification available</strong>
+                                {% else %}
+                                    {% for value in notifications.values() %}
+                                        <div class="notification-item alert alert-info">📢{{ value[0] }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <button class="btn btn-danger btn-sm clear-btn" id="clearNotifications">Clear All</button>
+                        </div>
+                    </div>
+                    <div><h2>Profile</h2></div>
+                </div>
+            </div>
+            <div class="card shadow ">
+                <div class="card-body">
+                    <h4 class="card-title mb-4"><i class="fas fa-upload me-2"></i>Upload Document or Link</h4>
+            
+                    <!-- Alert Container -->
+                    <div id="alertContainer"></div>
+            
+                    <!-- File Upload -->
+                    <div class="mb-4">
+                        <label for="fileInput" class="form-label"><i class="fas fa-file-upload me-2"></i>Choose Document File</label>
+                        <input type="file" id="fileInput" class="form-control" multiple>
+                    </div>
+            
+                    <!-- Cloud Link Input -->
+                    <div class="mb-4">
+                        <label for="cloudLink" class="form-label"><i class="fas fa-link me-2"></i>Add Cloud File Link (e.g., Google Drive, Dropbox)</label>
+                        <div class="input-group">
+                            <input type="url" id="cloudLink" class="form-control" placeholder="Paste your link here">
+                            <button id="addLinkBtn" class="btn btn-outline-primary"><i class="fas fa-plus"></i> Add Link</button>
+                        </div>
+                    </div>
+            
+                    <!-- File List -->
+                    <div class="file-list mb-4" id="fileList"></div>
+            
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-end gap-2">
+                        <button class="btn btn-success" id="uploadBtn"><i class="fas fa-cloud-upload-alt"></i> Upload</button>
+                        <button class="btn btn-secondary" id="cancelBtn"><i class="fas fa-times"></i> Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-confirm">
+                        <div class="modal-content">
+                            <div class="modal-header flex-column">
+                                <div class="icon-box">
+                                </div>
+                                <h4 class="modal-title w-100" id="deleteModalLabel">Are you sure?</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p id="deleteModalMessage">Do you really want to delete this resource? This process cannot be undone.</p>
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-danger" id="viewer_confirmDeleteBtn">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+               
+        
+                <!-- Search and Filter Section -->
+              
+                    <!-- Additional Link Example -->
+        <div class="row" id="resourcesContainer" style="max-height: 500px; overflow-y: auto; padding-right: 10px;">
+             <!-- Batch actions row (hidden by default) -->
+             <div class="row batch-actions" id="viewer_batchActions">
+                <div class="col-12">
+                    <button class="btn btn-danger btn-sm" id="viewer_deleteSelectedBtn">
+                        <i class="fas fa-trash me-1"></i> Delete Selected
+                    </button>
+                    <button class="btn btn-secondary btn-sm ms-2" id="cancelSelectionBtn">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </button>
+                    <span class="ms-3" id="viewer_selectedCount">0 selected</span>
+                </div>
+            </div>
+            <!-- File Download Card -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Search resources..." id="searchInput">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filterSelect">
+                        <option value="all">All Resources</option>
+                        <option value="file">Files Only</option>
+                        <option value="link">Links Only</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-outline-primary w-100" id="selectMultipleBtn">
+                        <i class="fas fa-check-square me-1"></i> Select Multiple
+                    </button>
+                </div>
+            </div>
+            {% for key, (idno, name, description, path) in file_dict.items() %}
+            <div class="col-md-5 resource-card" data-type="file" data-id="{{ idno }}">
+                <div class="card h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="fas fa-file-pdf file-icon"></i>
+                        <div>
+                            <h5 class="card-title">{{name}}</h5>
+                            <p class="card-text">{{description}}</p>
+                            <a href="{{path}}" class="btn btn-primary" download="">
+                                <i class="fas fa-download me-1"></i> Download
+                            </a>
+                            <button class="btn btn-outline-danger btn-sm ms-2 delete-single-btn" data-id="{{ idno }}">
+                                <i class="fas fa-trash me-1"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        External resource | Google Drive
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        
+        {% for key, (idno, name, description, url) in link_dict.items() %}
+            <div class="col-md-5 resource-card" data-type="link" data-id="{{ idno }}">
+                <div class="card h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="fas fa-link link-icon"></i>
+                        <div>
+                            <h5 class="card-title">{{name}}</h5>
+                            <p class="card-text">{{description}}</p>
+                            <a href="{{url}}" class="btn btn-danger" target="_blank">
+                                <i class="fas fa-external-link-alt me-1"></i> Open Link
+                            </a>
+                            <button class="btn btn-outline-danger btn-sm ms-2 delete-single-btn" data-id="{{ idno }}">
+                                <i class="fas fa-trash me-1"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        External resource | Google Drive
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+        </div>
+                <!-- Empty State (hidden by default) -->
+                <div class="text-center py-5" id="emptyState" style="display: none;">
+                    <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
+                    <h3>No Resources Found</h3>
+                    <p class="text-muted">Try adjusting your search or filter criteria</p>
+                </div>
+               <!-- Modal for File Title Input -->
+            <div class="modal fade" id="fileTitleModal" tabindex="-1" aria-labelledby="fileTitleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="fileTitleModalLabel">Enter File Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="fileTitleInput" class="form-label">Title (Required)</label>
+                                <input type="text" class="form-control" id="fileTitleInput" placeholder="Enter title for your file(s)" required>
+                                <div class="title-error" id="fileTitleError">Title is required and must be at least 3 characters</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="fileDescriptionInput" class="form-label">Description</label>
+                                <textarea class="form-control" id="fileDescriptionInput" rows="3" placeholder="Enter description (optional)"></textarea>
+                                <div class="desc-error" id="fileDescError">Description cannot exceed 500 characters</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="confirmFileTitle">Add File(s)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal for Link Title Input -->
+            <div class="modal fade" id="linkTitleModal" tabindex="-1" aria-labelledby="linkTitleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="linkTitleModalLabel">Enter Link Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="linkTitleInput" class="form-label">Title (Required)</label>
+                                <input type="text" class="form-control" id="linkTitleInput" placeholder="Enter title for your link" required>
+                                <div class="title-error" id="linkTitleError">Title is required and must be at least 3 characters</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="linkDescriptionInput" class="form-label">Description</label>
+                                <textarea class="form-control" id="linkDescriptionInput" rows="3" placeholder="Enter description (optional)"></textarea>
+                                <div class="desc-error" id="linkDescError">Description cannot exceed 500 characters</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="confirmLinkTitle">Add Link</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // DOM elements
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const uploadText = document.getElementById('uploadText');
+            const uploadSpinner = document.getElementById('uploadSpinner');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const alertContainer = document.getElementById('alertContainer');
+            const cloudLinkInput = document.getElementById('cloudLink');
+            const addLinkBtn = document.getElementById('addLinkBtn');
+
+            // Modal elements
+            const fileTitleInput = document.getElementById('fileTitleInput');
+            const fileDescriptionInput = document.getElementById('fileDescriptionInput');
+            const fileTitleError = document.getElementById('fileTitleError');
+            const fileDescError = document.getElementById('fileDescError');
+            const confirmFileTitle = document.getElementById('confirmFileTitle');
+            const linkTitleInput = document.getElementById('linkTitleInput');
+            const linkDescriptionInput = document.getElementById('linkDescriptionInput');
+            const linkTitleError = document.getElementById('linkTitleError');
+            const linkDescError = document.getElementById('linkDescError');
+            const confirmLinkTitle = document.getElementById('confirmLinkTitle');
+
+            // Configuration
+            const allowedTypes = [
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            ];
+
+            // State management
+            let uploadedItems = JSON.parse(sessionStorage.getItem('uploadedItems') || '[]');
+            let currentFileQueue = [];
+
+            // Initialize the UI with existing items
+            renderUploadedItems();
+
+            // Event listeners
+            fileInput.addEventListener('change', handleFileInputChange);
+            confirmFileTitle.addEventListener('click', handleConfirmFileTitle);
+            addLinkBtn.addEventListener('click', handleAddLinkClick);
+            confirmLinkTitle.addEventListener('click', handleConfirmLinkTitle);
+            uploadBtn.addEventListener('click', handleUpload);
+            cancelBtn.addEventListener('click', handleCancel);
+
+            // Functions
+            function renderUploadedItems() {
+                fileList.innerHTML = '';
+                uploadedItems.forEach(item => {
+                    if (item.type === 'link') {
+                        addLinkToList(item.item, item.title, item.description);
+                    } else if (item.type === 'file') {
+                        addFileToList(item.item, item.title, item.description);
+                    }
+                });
+            }
+
+            function showAlert(message, type = 'success') {
+                alertContainer.innerHTML = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>`;
+            }
+
+            function handleFileInputChange() {
+                currentFileQueue = Array.from(fileInput.files).filter(file => allowedTypes.includes(file.type));
+                if (currentFileQueue.length) {
+                    const fileTitleModal = new bootstrap.Modal(document.getElementById('fileTitleModal'));
+                    fileTitleInput.value = '';
+                    fileDescriptionInput.value = '';
+                    fileTitleError.style.display = 'none';
+                    fileDescError.style.display = 'none';
+                    fileTitleModal.show();
+                } else if (fileInput.files.length > 0) {
+                    showAlert('Only document files are allowed (PDF, Word, Excel, PowerPoint)', 'danger');
+                }
+            }
+
+            function handleConfirmFileTitle() {
+                const title = fileTitleInput.value.trim();
+                const description = fileDescriptionInput.value.trim();
+                
+                // Validate title
+                if (!title || title.length < 3) {
+                    fileTitleError.style.display = 'block';
+                    fileTitleInput.classList.add('is-invalid');
+                    return;
+                }
+                
+                // Validate description length
+                if (description.length > 500) {
+                    fileDescError.style.display = 'block';
+                    fileDescriptionInput.classList.add('is-invalid');
+                    return;
+                }
+                
+                // Clear errors if validation passes
+                fileTitleError.style.display = 'none';
+                fileTitleInput.classList.remove('is-invalid');
+                fileDescError.style.display = 'none';
+                fileDescriptionInput.classList.remove('is-invalid');
+
+                currentFileQueue.forEach(file => {
+                    uploadedItems.push({ 
+                        type: 'file', 
+                        item: file, 
+                        title,
+                        description: description || null
+                    });
+                });
+                
+                sessionStorage.setItem('uploadedItems', JSON.stringify(uploadedItems));
+                renderUploadedItems();
+                currentFileQueue = [];
+                fileInput.value = '';
+                
+                const fileTitleModal = bootstrap.Modal.getInstance(document.getElementById('fileTitleModal'));
+                fileTitleModal.hide();
+            }
+
+            function handleAddLinkClick() {
+                const url = cloudLinkInput.value.trim();
+                if (!url) {
+                    showAlert('Please enter a valid URL', 'warning');
+                    return;
+                }
+
+                const isCloudLink = /(drive\.google\.com|dropbox\.com|onedrive\.live\.com|box\.com|icloud\.com)/i.test(url);
+                if (!isCloudLink) {
+                    showAlert('Only cloud storage links are allowed (Google Drive, Dropbox, OneDrive, etc.)', 'danger');
+                    return;
+                }
+
+                const linkTitleModal = new bootstrap.Modal(document.getElementById('linkTitleModal'));
+                linkTitleInput.value = '';
+                linkDescriptionInput.value = '';
+                linkTitleError.style.display = 'none';
+                linkDescError.style.display = 'none';
+                linkTitleModal.show();
+            }
+
+            function handleConfirmLinkTitle() {
+                const title = linkTitleInput.value.trim();
+                const description = linkDescriptionInput.value.trim();
+                const url = cloudLinkInput.value.trim();
+                
+                // Validate title
+                if (!title || title.length < 3) {
+                    linkTitleError.style.display = 'block';
+                    linkTitleInput.classList.add('is-invalid');
+                    return;
+                }
+                
+                // Validate description length
+                if (description.length > 500) {
+                    linkDescError.style.display = 'block';
+                    linkDescriptionInput.classList.add('is-invalid');
+                    return;
+                }
+                
+                // Clear errors if validation passes
+                linkTitleError.style.display = 'none';
+                linkTitleInput.classList.remove('is-invalid');
+                linkDescError.style.display = 'none';
+                linkDescriptionInput.classList.remove('is-invalid');
+
+                uploadedItems.push({ 
+                    type: 'link', 
+                    item: url, 
+                    title,
+                    description: description || null
+                });
+                
+                sessionStorage.setItem('uploadedItems', JSON.stringify(uploadedItems));
+                renderUploadedItems();
+                cloudLinkInput.value = '';
+                
+                const linkTitleModal = bootstrap.Modal.getInstance(document.getElementById('linkTitleModal'));
+                linkTitleModal.hide();
+            }
+
+            function addLinkToList(link, title, description) {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item p-3 rounded shadow-sm';
+
+                fileItem.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="file-icon text-info me-3"><i class="fas fa-link"></i></div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <h6 class="mb-0 text-break">${title}</h6>
+                                <span class="badge bg-info file-type-badge">LINK</span>
+                            </div>
+                            <div class="small text-muted d-flex justify-content-between align-items-center">
+                                <a href="${link}" target="_blank" class="text-truncate" style="max-width: 200px;">${link}</a>
+                                <span>Ready to access</span>
+                            </div>
+                            ${description ? `<div class="file-description">${description}</div>` : ''}
+                        </div>
+                        <div class="ms-3">
+                            <button class="btn btn-sm btn-outline-danger remove-file"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+
+                fileItem.querySelector('.remove-file').addEventListener('click', function () {
+                    fileItem.remove();
+                    uploadedItems = uploadedItems.filter(x => !(x.item === link && x.type === 'link'));
+                    sessionStorage.setItem('uploadedItems', JSON.stringify(uploadedItems));
+                });
+
+                fileList.appendChild(fileItem);
+            }
+
+            function addFileToList(file, title, description) {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item p-3 rounded shadow-sm';
+
+                const fileSize = (file.size / 1024).toFixed(2);
+                const fileType = file.name.split('.').pop().toUpperCase();
+
+                fileItem.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="file-icon text-secondary me-3"><i class="fas fa-file-alt"></i></div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <h6 class="mb-0 text-break">${title}</h6>
+                                <span class="badge bg-secondary file-type-badge">${fileType}</span>
+                            </div>
+                            <div class="small text-muted d-flex justify-content-between align-items-center">
+                                <span>${file.name}</span>
+                                <span>${fileSize} KB</span>
+                            </div>
+                            ${description ? `<div class="file-description">${description}</div>` : ''}
+                        </div>
+                        <div class="ms-3">
+                            <button class="btn btn-sm btn-outline-danger remove-file"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+
+                fileItem.querySelector('.remove-file').addEventListener('click', function () {
+                    fileItem.remove();
+                    uploadedItems = uploadedItems.filter(x => !(x.item.name === file.name && x.type === 'file'));
+                    sessionStorage.setItem('uploadedItems', JSON.stringify(uploadedItems));
+                });
+
+                fileList.appendChild(fileItem);
+            }
+
+            async function handleUpload() {
+                if (uploadedItems.length === 0) {
+                    showAlert('No items to upload.', 'warning');
+                    return;
+                }
+
+                // Show loading state
+                uploadBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Uploading...';
+                uploadBtn.disabled = true;
+
+                try {
+                    const formData = new FormData();
+                    
+                    // Separate files and links
+                    const files = uploadedItems.filter(item => item.type === 'file');
+                    const links = uploadedItems.filter(item => item.type === 'link');
+
+                    // Add files to FormData with their titles and descriptions
+                    files.forEach((item, index) => {
+                        formData.append(`files`, item.item); // Actual file
+                        formData.append(`file_titles`, item.title); // Corresponding title
+                        if (item.description) {
+                            formData.append(`file_descriptions`, item.description); // Corresponding description
+                        }
+                    });
+
+                    
+                    // Create an array of link objects with descriptions
+                    const linkData = links.map(link => ({
+                        path: link.item,
+                        title: link.title,
+                        description: link.description || ''
+                    }));
+                    
+                    // Add links as JSON string
+                    formData.append('links', JSON.stringify(linkData));
+
+                    const response = await fetch('/save_upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(result.message || 'Upload failed');
+                    }
+
+                    // Build success message with details
+                    let successMessage = '';
+                    if (result.saved_files.length > 0) {
+                        successMessage += `<strong>Files uploaded:</strong><ul>`;
+                        result.saved_files.forEach(file => {
+                            successMessage += `<li>${file.title}${file.description ? ` - ${file.description}` : ''}</li>`;
+                        });
+                        successMessage += `</ul>`;
+                    }
+                    
+                    if (result.links.length > 0) {
+                        successMessage += `<strong>Links added:</strong><ul>`;
+                        result.links.forEach(link => {
+                            successMessage += `<li>${link.title}${link.description ? ` - ${link.description}` : ''}</li>`;
+                        });
+                        successMessage += `</ul>`;
+                    }
+                    
+                    if (result.existing_files.length > 0) {
+                        successMessage += `<strong>Existing files (not uploaded):</strong><ul>`;
+                        result.existing_files.forEach(file => {
+                            successMessage += `<li>${file.filename}</li>`;
+                        });
+                        successMessage += `</ul>`;
+                    }
+
+                    showAlert(successMessage || 'Upload completed successfully');
+                    
+                    // Reset everything after successful upload
+                    uploadedItems = [];
+                    sessionStorage.removeItem('uploadedItems');
+                    fileList.innerHTML = '';
+                    fileInput.value = '';
+                    cloudLinkInput.value = '';
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    showAlert(`Upload failed: ${error.message}`, 'danger');
+                } finally {
+                    // Reset button state
+                    uploadBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload';
+                    uploadBtn.disabled = false;
+                }
+            }
+
+            function handleCancel() {
+                uploadedItems = [];
+                sessionStorage.removeItem('uploadedItems');
+                fileList.innerHTML = '';
+                fileInput.value = '';
+                cloudLinkInput.value = '';
+                showAlert('Upload cancelled.', 'info');
+            }
+            const searchInput = document.getElementById('searchInput');
+            const filterSelect = document.getElementById('filterSelect');
+            const resourceCards = document.querySelectorAll('.resource-card');
+            const emptyState = document.getElementById('emptyState');
+            const selectMultipleBtn = document.getElementById('selectMultipleBtn');
+            const viewer_batchActions = document.getElementById('viewer_batchActions');
+            const viewer_deleteSelectedBtn = document.getElementById('viewer_deleteSelectedBtn');
+            const cancelSelectionBtn = document.getElementById('cancelSelectionBtn');
+            const viewer_selectedCount = document.getElementById('viewer_selectedCount');
+            const checkboxes = document.querySelectorAll('.resource-checkbox');
+            const deleteSingleBtns = document.querySelectorAll('.delete-single-btn');
+            const deleteConfirmationModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+            const deleteModalMessage = document.getElementById('deleteModalMessage');
+            const viewer_confirmDeleteBtn = document.getElementById('viewer_confirmDeleteBtn');
+
+            // Track selected resources and deletion state
+            let selectedResources = [];
+            let pendingDeletionIds = [];
+            let isBulkDelete = false;
+
+            function filterResources() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filterType = filterSelect.value;
+                let visibleCount = 0;
+
+                resourceCards.forEach(card => {
+                    if (card.style.display === 'none' && card.classList.contains('deleted')) {
+                        return; // Skip already deleted cards
+                    }
+
+                    const title = card.querySelector('.card-title').textContent.toLowerCase();
+                    const description = card.querySelector('.card-text').textContent.toLowerCase();
+                    const cardType = card.getAttribute('data-type');
+                    
+                    const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+                    const matchesFilter = filterType === 'all' || cardType === filterType;
+                    
+                    if (matchesSearch && matchesFilter) {
+                        card.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                if (visibleCount === 0) {
+                    emptyState.style.display = 'block';
+                } else {
+                    emptyState.style.display = 'none';
+                }
+            }
+
+            // In your resource_viewer.html JavaScript section
+        async function delete_some_resources(idno) {
+            try {
+                const response = await fetch(`/delete_resource/${idno}`, {
+                    method: 'POST',  // Using POST since your helper might expect this
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    // Include CSRF token if needed
+                    credentials: 'same-origin'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Error deleting resource:', error);
+                return { success: false, message: error.message };
+            }
+        }
+
+        // Modify your performDeletion function to use this
+        async function performDeletion() {
+            try {
+                if (isBulkDelete) {
+                    // For bulk delete, we'll call the API for each ID
+                    const deletionPromises = pendingDeletionIds.map(id => 
+                        delete_some_resources(id)
+                    );
+                    
+                    const results = await Promise.all(deletionPromises);
+                    const allSuccess = results.every(result => result.success);
+                    
+                    if (allSuccess) {
+                        // Remove all successfully deleted cards
+                        pendingDeletionIds.forEach(id => {
+                            const card = document.querySelector(`.resource-card[data-id="${id}"]`);
+                            if (card) card.remove();
+                        });
+                        toggleSelectionMode();
+                    } else {
+                        alert('Some resources could not be deleted');
+                    }
+                } else {
+                    // Single deletion
+                    const result = await delete_some_resources(pendingDeletionIds[0]);
+                    if (result.success) {
+                        const card = document.querySelector(`.resource-card[data-id="${pendingDeletionIds[0]}"]`);
+                        if (card) card.remove();
+                    } else {
+                        alert('Error deleting resource: ' + (result.message || 'Unknown error'));
+                    }
+                }
+            } catch (error) {
+                console.error('Deletion error:', error);
+                alert('Error during deletion process');
+            } finally {
+                pendingDeletionIds = [];
+                isBulkDelete = false;
+                filterResources();
+            }
+        }
+
+            // Toggle selection mode
+            function toggleSelectionMode() {
+                const isSelecting = viewer_batchActions.style.display === 'block';
+                
+                if (isSelecting) {
+                    // Exit selection mode
+                    viewer_batchActions.style.display = 'none';
+                    selectMultipleBtn.innerHTML = '<i class="fas fa-check-square me-1"></i> Select Multiple';
+                    selectMultipleBtn.classList.remove('btn-primary');
+                    selectMultipleBtn.classList.add('btn-outline-primary');
+                    
+                    // Hide checkboxes and reset selection
+                    checkboxes.forEach(checkbox => {
+                        checkbox.style.display = 'none';
+                        checkbox.checked = false;
+                    });
+                    
+                    // Remove selected class from cards
+                    document.querySelectorAll('.card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    
+                    selectedResources = [];
+                    updateViewer_selectedCount();
+                } else {
+                    // Enter selection mode
+                    viewer_batchActions.style.display = 'block';
+                    selectMultipleBtn.innerHTML = '<i class="fas fa-times me-1"></i> Cancel Selection';
+                    selectMultipleBtn.classList.remove('btn-outline-primary');
+                    selectMultipleBtn.classList.add('btn-primary');
+                    
+                    // Show checkboxes
+                    checkboxes.forEach(checkbox => {
+                        checkbox.style.display = 'block';
+                    });
+                }
+            }
+
+            // Update selected count display
+            function updateViewer_selectedCount() {
+                const count = selectedResources.length;
+                viewer_selectedCount.textContent = `${count} selected`;
+                
+                // Enable/disable delete button based on selection
+                viewer_deleteSelectedBtn.disabled = count === 0;
+            }
+
+            // Show delete confirmation modal
+            function showDeleteConfirmation(isBulk, ids) {
+                isBulkDelete = isBulk;
+                pendingDeletionIds = ids;
+                
+                if (isBulk) {
+                    deleteModalMessage.textContent = `Are you sure you want to delete ${ids.length} selected resources? This action cannot be undone.`;
+                    document.getElementById('deleteModalLabel').textContent = `Delete ${ids.length} Resources?`;
+                } else {
+                    const card = document.querySelector(`.resource-card[data-id="${ids[0]}"]`);
+                    const title = card ? card.querySelector('.card-title').textContent : 'this resource';
+                    deleteModalMessage.textContent = `Are you sure you want to delete "${title}"? This action cannot be undone.`;
+                    document.getElementById('deleteModalLabel').textContent = 'Delete Resource?';
+                }
+                
+                deleteConfirmationModal.show();
+            }
+
+
+
+            // Delete selected resources
+            function deleteSelected() {
+                if (selectedResources.length === 0) return;
+                showDeleteConfirmation(true, [...selectedResources]);
+            }
+
+            // Delete single resource
+            function deleteSingleResource(id) {
+                showDeleteConfirmation(false, [id]);
+            }
+
+            // Event listeners
+            searchInput.addEventListener('input', filterResources);
+            filterSelect.addEventListener('change', filterResources);
+            selectMultipleBtn.addEventListener('click', toggleSelectionMode);
+            cancelSelectionBtn.addEventListener('click', toggleSelectionMode);
+            viewer_deleteSelectedBtn.addEventListener('click', deleteSelected);
+            viewer_confirmDeleteBtn.addEventListener('click', function() {
+                deleteConfirmationModal.hide();
+                performDeletion();
+            });
+            
+            // Checkbox change events
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const card = this.closest('.resource-card');
+                    const id = card.getAttribute('data-id');
+                    const cardElement = card.querySelector('.card');
+                    
+                    if (this.checked) {
+                        if (!selectedResources.includes(id)) {
+                            selectedResources.push(id);
+                            cardElement.classList.add('selected');
+                        }
+                    } else {
+                        selectedResources = selectedResources.filter(item => item !== id);
+                        cardElement.classList.remove('selected');
+                    }
+                    
+                    updateViewer_selectedCount();
+                });
+            });
+            
+            // Single delete button events
+            deleteSingleBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    deleteSingleResource(id);
+                });
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/darkmode.js"></script> 
+    <script src="../static/notification.js"></script>
+</html>
+    

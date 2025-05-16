@@ -37,14 +37,8 @@
                     <div class="menu">
                         <ul class="menu-links">
                             <li class="nav-link">
-                                <a href="">
-                                    <i class='bx bx-home-alt icon' ></i>
-                                    <span class="text nav-text">Dashboard</span>
-                                </a>
-                            </li>
-                            <li class="nav-link">
                                 <a href="{{url_for('announcement_template')}}">
-                                    <i class='bx bxs-megaphone  icon' ></i>
+                                    <i class='bx bx-home-alt icon' ></i>
                                     <span class="text nav-text ">Anouncement</span>
                                 </a>
                             </li>
@@ -78,6 +72,36 @@
                                     <span class="text nav-text">Feedbacks Records</span>
                                 </a>
                             </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('resource_template')}}">
+                                    <i class='bx bx-cloud-upload icon'></i>
+                                    <span class="text nav-text">Lab Resources Uploader</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('leaderboard_admin_template')}}">
+                                    <i class='bx bxs-bar-chart-alt-2 icon'></i>
+                                    <span class="text nav-text">Leaderboards</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('reservation_request_template')}}">
+                                    <i class="fa-regular fa-calendar-days icon"></i>
+                                    <span class="text nav-text">Reservation Request</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('reservation_logs_template')}}">
+                                    <i class="fa-solid fa-table-list icon"></i>
+                                    <span class="text nav-text">Reservation Logs</span>
+                                </a>
+                            </li>
+                             <li class="nav-link">
+                                <a href="{{url_for('pc_monitor_template')}}">
+                                    <i class="fa-solid fa-desktop icon"></i>
+                                    <span class="text nav-text">Comlab Management</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <div class="bottom-content">
@@ -104,7 +128,23 @@
         <div class="contentDiv" style="margin-left: 30px;">
             <div class="topNavigation">
                 <div class="items item1 text"> 
-                    <div><i class='bx bxs-bell'></i></div>
+                    <div class="notification-container">
+                        <i class='bx bxs-bell icon' id="notificationIcon"></i>
+                        <span class="notification-badge" id="notificationCount">{% if notifications %}{{ notifications|length }}{% else %}0{% endif %}</span>
+                        <div class="notification-box" id="notificationBox" style="display: none;">
+                            <div class="notification-header">🔔 Notifications</div>
+                            <div id="notificationList">
+                                {% if not notifications %}
+                                    <strong style="font-size: 15px;">No notification available</strong>
+                                {% else %}
+                                    {% for value in notifications.values() %}
+                                        <div class="notification-item alert alert-info">📢{{ value[0] }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <button class="btn btn-danger btn-sm clear-btn" id="clearNotifications">Clear All</button>
+                        </div>
+                    </div>
                     <div><h2>Profile</h2></div>
                 </div>
             </div>
@@ -240,6 +280,7 @@ displayTablePage(1);
 
 </script>
 <script src="../static/darkmode.js"></script> 
+<script src="../static/notification.js"></script>
 </html>
     
     

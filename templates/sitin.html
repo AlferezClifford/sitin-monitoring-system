@@ -46,14 +46,8 @@
                 <div class="menu">
                     <ul class="menu-links">
                         <li class="nav-link">
-                            <a href="">
-                                <i class='bx bx-home-alt icon' ></i>
-                                <span class="text nav-text">Dashboard</span>
-                            </a>
-                        </li>
-                        <li class="nav-link">
                             <a href="{{url_for('announcement_template')}}">
-                                <i class='bx bxs-megaphone  icon' ></i>
+                                <i class='bx bx-home-alt icon' ></i>
                                 <span class="text nav-text ">Anouncement</span>
                             </a>
                         </li>
@@ -87,6 +81,35 @@
                                 <span class="text nav-text">Feedbacks Records</span>
                             </a>
                         </li>
+                        <li class="nav-link">
+                            <a href="{{url_for('resource_template')}}">
+                                <i class='bx bx-cloud-upload icon'></i>
+                                <span class="text nav-text">Lab Resources Uploader</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="{{url_for('leaderboard_admin_template')}}">
+                                <i class='bx bxs-bar-chart-alt-2 icon'></i>
+                                <span class="text nav-text">Leaderboards</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="{{url_for('reservation_request_template')}}">
+                                <i class="fa-regular fa-calendar-days icon"></i>
+                                <span class="text nav-text">Reservation Request</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="{{url_for('reservation_logs_template')}}">                                <i class="fa-solid fa-table-list icon"></i>
+                                <span class="text nav-text">Reservation Logs</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="{{url_for('pc_monitor_template')}}">
+                                <i class="fa-solid fa-desktop icon"></i>
+                                <span class="text nav-text">Comlab Management</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div class="bottom-content">
@@ -113,7 +136,23 @@
         <div class="contentDiv" style="margin-left: 30px;">
             <div class="topNavigation">
                 <div class="items item1 text"> 
-                    <div><i class='bx bxs-bell'></i></div>
+                    <div class="notification-container">
+                        <i class='bx bxs-bell icon' id="notificationIcon"></i>
+                        <span class="notification-badge" id="notificationCount">{% if notifications %}{{ notifications|length }}{% else %}0{% endif %}</span>
+                        <div class="notification-box" id="notificationBox" style="display: none;">
+                            <div class="notification-header">🔔 Notifications</div>
+                            <div id="notificationList">
+                                {% if not notifications %}
+                                    <strong style="font-size: 15px;">No notification available</strong>
+                                {% else %}
+                                    {% for value in notifications.values() %}
+                                        <div class="notification-item alert alert-info">📢{{ value[0] }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <button class="btn btn-danger btn-sm clear-btn" id="clearNotifications">Clear All</button>
+                        </div>
+                    </div>
                     <div><h2>Profile</h2></div>
                 </div>
             </div>
@@ -206,7 +245,7 @@
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#sessionModal"
                                                 data-id="{{ value[0] }}">  
-                                            LOGOUT
+                                            End_Session
                                         </button>
                                 </td>                                
                         </tbody>
@@ -214,7 +253,7 @@
                       </table>
                       
                 </div>
-                <!-- Modal Structure -->
+                <!-- First Modal - Confirm End Session -->
                 <div class="modal fade" id="sessionModal" tabindex="-1" aria-labelledby="sessionModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -226,11 +265,31 @@
                                 Are you sure you want to end this session?
                             </div>
                             <div class="modal-footer">
-                                <form action="{{ url_for('end_session') }}" method="post">
-                                    <input type="hidden" name="idno" id="modalId">
-                                    <button type="submit" class="btn btn-danger">Yes</button>
-                                </form>
+                                <button type="button" class="btn btn-primary" id="confirmEndSession">Yes</button>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Second Modal - Add Point -->
+                <div class="modal fade" id="addPointModal" tabindex="-1" aria-labelledby="addPointModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addPointModalLabel">Add Point</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Do you want to add 1 point?
+                            </div>
+                            <div class="modal-footer">
+                                <form action="{{ url_for('end_session') }}" method="post" id="endSessionForm">
+                                    <input type="hidden" name="idno" id="modalId">
+                                    <input type="hidden" name="add_point" value="1" id="addPointInput">
+                                    <button type="submit" class="btn btn-primary">Yes</button>
+                                </form>
+                                <button type="button" class="btn btn-secondary" id="endWithoutPoint">No</button>
                             </div>
                         </div>
                     </div>
@@ -252,7 +311,28 @@
                 document.getElementById("modalId").value = id;  // Set it in the hidden input
             });
         });
+        
+        // Handle the first modal's "Yes" button
+        document.getElementById('confirmEndSession').addEventListener('click', function() {
+            // Hide the first modal
+            var sessionModal = bootstrap.Modal.getInstance(document.getElementById('sessionModal'));
+            sessionModal.hide();
+            
+            // Show the second modal
+            var addPointModal = new bootstrap.Modal(document.getElementById('addPointModal'));
+            addPointModal.show();
+        });
+        
+        // Handle the second modal's "No" button (end session without adding point)
+        document.getElementById('endWithoutPoint').addEventListener('click', function() {
+            // Set add_point to 0
+            document.getElementById('addPointInput').value = '0';
+            
+            // Submit the form
+            document.getElementById('endSessionForm').submit();
+        });
     });
+    
     function searchTable() {
         let input = document.getElementById("searchInput");
         let filter = input.value.toLowerCase();
@@ -278,7 +358,6 @@
     }
     
 </script>
+<script src="../static/notification.js"></script>
 <script src="../static/darkmode.js"></script> 
 </html>
-    
-    

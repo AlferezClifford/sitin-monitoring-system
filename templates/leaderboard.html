@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboards</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
+    <link rel="stylesheet" href="../static/css/dashboard-style.css">
+
+    <style>
+        .table thead th {
+            background-color: #343a40;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+        .rank-1 {
+            background-color: #fff9e6 !important; /* Light gold background */
+        }
+        .rank-2 {
+            background-color: #f8f9fa !important; /* Light silver background */
+        }
+        .rank-3 {
+            background-color: #fdf3e6 !important; /* Light bronze background */
+        }
+        .current-user {
+            background-color: #d4edda !important;
+            font-weight: bold;
+            position: relative;
+        }
+        .current-user::after {
+            content: "YOU";
+            position: absolute;
+            right: 10px;
+            background-color: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+        .table-hover tbody tr:hover {
+            transform: scale(1.01);
+            transition: transform 0.2s;
+        }
+        .page-item.active .page-link {
+            background-color: #343a40;
+            border-color: #343a40;
+        }
+        .page-link {
+            color: #343a40;
+        }
+        .rank-icon {
+            margin-right: 8px;
+        }
+        .gold-icon {
+            color: #ffd700;
+        }
+        .silver-icon {
+            color: #c0c0c0;
+        }
+        .bronze-icon {
+            color: #cd7f32;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ParentDivContainer">
+        <div>
+            <nav class="sidebar close">
+                <header>
+                    <div class="image-text">
+                        <span class="image">
+                            <img src="../static/imgs/PSITS_LOGO.png" alt="logo">
+                        </span>
+                        <div class="text header-text">
+                            <span class="name">Sitin-Monitoring</span>
+                            <span class="prefession">Project</span>
+                        </div>
+                    </div>
+
+                    <i class="bx bx-chevron-right toggle"></i>
+                </header>
+                <div class="menu-bar">
+                    <div class="menu">
+                        <ul class="menu-links">
+                            <li class="nav-link">
+                                <a href="{{url_for('dashboard')}}">
+                                    <i class='bx bx-home-alt icon' ></i>
+                                    <span class="text nav-text">Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('reservation_template')}}">
+                                    <i class='bx bx-calendar-check icon'  ></i>
+                                    <span class="text nav-text">Reservation</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('history_table_temp')}}">
+                                    <i class='bx bx-time-five icon' ></i>
+                                    <span class="text nav-text">History</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('edit_profile_template')}}">
+                                    <i class='bx bx-user icon' ></i>
+                                    <span class="text nav-text">Profile</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('lab_resources_template')}}">
+                                    <i class='bx bxs-report icon'></i>
+                                    <span class="text nav-text"> Lab Resources</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('lab_schedule_template')}}">
+                                    <i class='bx bxs-school icon'></i>
+                                    <span class="text nav-text">Lab Schedule</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('leaderboard_template')}}">
+                                    <i class='bx bxs-bar-chart-alt-2 icon'></i>
+                                    <span class="text nav-text">Leaderboards</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bottom-content">
+                        <li class="">
+                            <a href="{{url_for('logout')}}">
+                                <i class='bx bx-log-out icon' id="logout-btn"></i>
+                                <span class="text nav-text">Logout</span>
+                            </a>
+                        </li>
+                        <li class="mode">
+                            <div class="moon-sun">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun  icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark Mode</span>
+                            <div class="toggle-switch"> 
+                                <span class="switch"></span>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="contentDiv">
+         
+            <div class="topNavigation">
+                <div class="items item1 text"> 
+                    <div class="notification-container">
+                        <i class='bx bxs-bell icon' id="notificationIcon"></i>
+                        <span class="notification-badge" id="notificationCount">{% if notifications %}{{ notifications|length }}{% else %}0{% endif %}</span>
+                        <div class="notification-box" id="notificationBox" style="display: none;">
+                            <div class="notification-header">🔔 Notifications</div>
+                            <div id="notificationList">
+                                {% if not notifications %}
+                                    <strong style="font-size: 15px;">No notification available</strong>
+                                {% else %}
+                                    {% for notification in notifications %}
+                                        <div class="notification-item alert alert-info">📢{{ notification[0] }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <button class="btn btn-danger btn-sm clear-btn" id="clearNotifications">Clear All</button>
+                        </div>
+                    </div>
+                    <div><h2>Profile</h2></div>
+                </div>
+            </div>
+            <div class="" style="margin-left: 30px;">
+                <div class=""> 
+                    <h2 class="text-left mb-4">Student Leaderboard</h2>
+                </div>
+            </div>
+            <div class="mainProfileContainer">
+                <div class="container mt-4">
+                    
+                    {# Check if current user is in leaderboard #}
+                    {% set ns = namespace(current_rank=0) %}
+                    {% for rank, data in leaderboard.items() %}
+                        {% if data[0] == idno %}
+                            {% set ns.current_rank = rank %}
+                            <div class="alert alert-info mb-3">
+                                You are currently ranked <strong>{{ rank }}</strong> on the leaderboard!
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped table-bordered">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col" class="text-center">Rank</th>
+                                    <th scope="col" class="text-center">Student ID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Course</th>
+                                    <th scope="col" class="text-center">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rank, data in leaderboard.items() %}
+                                <tr {% if data[0] == idno %}class="current-user"{% endif %}>
+                                    <th scope="row" class="text-center">{{ rank }}</th>
+                                    <td class="text-center">{{ data[0] }}</td>
+                                    <td>{{ data[1] }}</td>
+                                    <td>{{ data[2] }}</td>
+                                    <td class="text-center">{{ data[3] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            
+            </div>
+           
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+      <!-- Bootstrap 5 JS Bundle with Popper -->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+      <script>
+          const itemsPerPage = 10;
+          let currentPage = 1;
+  
+          // Find current user's rank
+          const currentUser = leaderboardData.find(user => user.isCurrentUser);
+          const currentUserRank = currentUser ? currentUser.rank : null;
+  
+          // Function to display the leaderboard for a specific page
+          function displayLeaderboard(page) {
+              const startIndex = (page - 1) * itemsPerPage;
+              const endIndex = startIndex + itemsPerPage;
+              const paginatedData = leaderboardData.slice(startIndex, endIndex);
+  
+              const leaderboardBody = document.getElementById('leaderboardBody');
+              leaderboardBody.innerHTML = '';
+  
+              paginatedData.forEach(student => {
+                  const row = document.createElement('tr');
+                  if (student.rank === 1) row.classList.add('rank-1');
+                  if (student.rank === 2) row.classList.add('rank-2');
+                  if (student.rank === 3) row.classList.add('rank-3');
+                  if (student.isCurrentUser) row.classList.add('current-user');
+  
+                  row.innerHTML = `
+                      <th scope="row" class="text-center">${student.rank}</th>
+                      <td class="text-center">${student.studentId}</td>
+                      <td>${student.name}</td>
+                      <td>${student.course}</td>
+                      <td class="text-center">${student.points}</td>
+                  `;
+                  leaderboardBody.appendChild(row);
+              });
+  
+              // Update current rank alert
+              const currentRankAlert = document.getElementById('currentRankAlert');
+              if (currentUser) {
+                  currentRankAlert.innerHTML = `You are currently ranked <strong>${currentUser.rank}${getOrdinalSuffix(currentUser.rank)}</strong> on the leaderboard!`;
+              } else {
+                  currentRankAlert.innerHTML = "You are not currently ranked on the leaderboard.";
+              }
+  
+              // Auto-scroll to current user if they're on this page
+              if (paginatedData.some(student => student.isCurrentUser)) {
+                  const currentUserRow = document.querySelector('.current-user');
+                  currentUserRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+          }
+  
+          // Helper function to get ordinal suffix
+          function getOrdinalSuffix(num) {
+              const j = num % 10;
+              const k = num % 100;
+              if (j === 1 && k !== 11) return 'st';
+              if (j === 2 && k !== 12) return 'nd';
+              if (j === 3 && k !== 13) return 'rd';
+              return 'th';
+          }
+  
+          // Function to setup pagination
+          function setupPagination() {
+              const totalPages = Math.ceil(leaderboardData.length / itemsPerPage);
+              const pagination = document.getElementById('pagination');
+              pagination.innerHTML = '';
+  
+              // Previous button
+              const prevLi = document.createElement('li');
+              prevLi.classList.add('page-item');
+              if (currentPage === 1) prevLi.classList.add('disabled');
+              prevLi.innerHTML = `
+                  <a class="page-link" href="#" aria-label="Previous" ${currentPage === 1 ? 'tabindex="-1"' : ''}>
+                      <span aria-hidden="true">&laquo;</span>
+                  </a>
+              `;
+              prevLi.addEventListener('click', (e) => {
+                  if (currentPage > 1) {
+                      e.preventDefault();
+                      changePage(currentPage - 1);
+                  }
+              });
+              pagination.appendChild(prevLi);
+  
+              // Page numbers
+              const maxVisiblePages = 5;
+              let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+              let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+  
+              if (endPage - startPage + 1 < maxVisiblePages) {
+                  startPage = Math.max(1, endPage - maxVisiblePages + 1);
+              }
+  
+              if (startPage > 1) {
+                  const firstLi = document.createElement('li');
+                  firstLi.classList.add('page-item');
+                  firstLi.innerHTML = `<a class="page-link" href="#">1</a>`;
+                  firstLi.addEventListener('click', (e) => {
+                      e.preventDefault();
+                      changePage(1);
+                  });
+                  pagination.appendChild(firstLi);
+  
+                  if (startPage > 2) {
+                      const ellipsisLi = document.createElement('li');
+                      ellipsisLi.classList.add('page-item', 'disabled');
+                      ellipsisLi.innerHTML = `<span class="page-link">...</span>`;
+                      pagination.appendChild(ellipsisLi);
+                  }
+              }
+  
+              for (let i = startPage; i <= endPage; i++) {
+                  const pageLi = document.createElement('li');
+                  pageLi.classList.add('page-item');
+                  if (i === currentPage) pageLi.classList.add('active');
+                  pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                  pageLi.addEventListener('click', (e) => {
+                      e.preventDefault();
+                      changePage(i);
+                  });
+                  pagination.appendChild(pageLi);
+              }
+  
+              if (endPage < totalPages) {
+                  if (endPage < totalPages - 1) {
+                      const ellipsisLi = document.createElement('li');
+                      ellipsisLi.classList.add('page-item', 'disabled');
+                      ellipsisLi.innerHTML = `<span class="page-link">...</span>`;
+                      pagination.appendChild(ellipsisLi);
+                  }
+  
+                  const lastLi = document.createElement('li');
+                  lastLi.classList.add('page-item');
+                  lastLi.innerHTML = `<a class="page-link" href="#">${totalPages}</a>`;
+                  lastLi.addEventListener('click', (e) => {
+                      e.preventDefault();
+                      changePage(totalPages);
+                  });
+                  pagination.appendChild(lastLi);
+              }
+  
+              // Next button
+              const nextLi = document.createElement('li');
+              nextLi.classList.add('page-item');
+              if (currentPage === totalPages) nextLi.classList.add('disabled');
+              nextLi.innerHTML = `
+                  <a class="page-link" href="#" aria-label="Next" ${currentPage === totalPages ? 'tabindex="-1"' : ''}>
+                      <span aria-hidden="true">&raquo;</span>
+                  </a>
+              `;
+              nextLi.addEventListener('click', (e) => {
+                  if (currentPage < totalPages) {
+                      e.preventDefault();
+                      changePage(currentPage + 1);
+                  }
+              });
+              pagination.appendChild(nextLi);
+          }
+  
+          // Function to change page
+          function changePage(page) {
+              if (page < 1 || page > Math.ceil(leaderboardData.length / itemsPerPage)) return;
+              currentPage = page;
+              displayLeaderboard(currentPage);
+              setupPagination();
+          }
+  
+          // Initialize the leaderboard
+          document.addEventListener('DOMContentLoaded', function() {
+              // Auto-navigate to page with current user
+              if (currentUserRank) {
+                  currentPage = Math.ceil(currentUserRank / itemsPerPage);
+              }
+              displayLeaderboard(currentPage);
+              setupPagination();
+          });
+      </script>
+    <script src="../static/darkmode.js"></script>
+    <script src="../static/notification.js"></script>
+</body>
+</html>

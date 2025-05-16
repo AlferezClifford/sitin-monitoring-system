@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Schedule</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
+    <link rel="stylesheet" href="../static/css/dashboard-style.css">
+    <style>
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .available {
+            background-color: #e8f5e9 !important;
+        }
+        .occupied {
+            background-color: #ffebee !important;
+        }
+        .time-col {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .schedule-tab {
+            display: none;
+        }
+        .schedule-tab.active {
+            display: block;
+        }
+        .nav-tabs .nav-link {
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+        @media (max-width: 768px) {
+            .nav-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ParentDivContainer">
+        <div>
+            <nav class="sidebar close">
+                <header>
+                    <div class="image-text">
+                        <span class="image">
+                            <img src="../static/imgs/PSITS_LOGO.png" alt="logo">
+                        </span>
+                        <div class="text header-text">
+                            <span class="name">Sitin-Monitoring</span>
+                            <span class="prefession">Project</span>
+                        </div>
+                    </div>
+
+                    <i class="bx bx-chevron-right toggle"></i>
+                </header>
+                <div class="menu-bar">
+                    <div class="menu">
+                        <ul class="menu-links">
+                            <li class="nav-link">
+                                <a href="{{url_for('dashboard')}}">
+                                    <i class='bx bx-home-alt icon' ></i>
+                                    <span class="text nav-text">Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('reservation_template')}}">
+                                    <i class='bx bx-calendar-check icon'  ></i>
+                                    <span class="text nav-text">Reservation</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('history_table_temp')}}">
+                                    <i class='bx bx-time-five icon' ></i>
+                                    <span class="text nav-text">History</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('edit_profile_template')}}">
+                                    <i class='bx bx-user icon' ></i>
+                                    <span class="text nav-text">Profile</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <li class="nav-link">
+                            <a href="{{url_for('lab_resources_template')}}">
+                                <i class='bx bxs-report icon'></i>
+                                <span class="text nav-text"> Lab Resources</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="{{url_for('lab_schedule_template')}}">
+                                <i class='bx bxs-school icon'></i>
+                                <span class="text nav-text">Lab Schedule</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="{{url_for('leaderboard_template')}}">
+                                <i class='bx bxs-bar-chart-alt-2 icon'></i>
+                                <span class="text nav-text">Leaderboards</span>
+                            </a>
+                        </li>
+                    </div>
+                    <div class="bottom-content">
+                        <li class="">
+                            <a href="{{url_for('logout')}}">
+                                <i class='bx bx-log-out icon' id="logout-btn"></i>
+                                <span class="text nav-text">Logout</span>
+                            </a>
+                        </li>
+                        <li class="mode">
+                            <div class="moon-sun">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun  icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark Mode</span>
+                            <div class="toggle-switch"> 
+                                <span class="switch"></span>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="contentDiv">
+         
+            <div class="topNavigation">
+                <div class="items item1 text"> 
+                    <div class="notification-container">
+                        <i class='bx bxs-bell icon' id="notificationIcon"></i>
+                        <span class="notification-badge" id="notificationCount">{% if notifications %}{{ notifications|length }}{% else %}0{% endif %}</span>
+                        <div class="notification-box" id="notificationBox" style="display: none;">
+                            <div class="notification-header">🔔 Notifications</div>
+                            <div id="notificationList">
+                                {% if not notifications %}
+                                    <strong style="font-size: 15px;">No notification available</strong>
+                                {% else %}
+                                    {% for notification in notifications %}
+                                        <div class="notification-item alert alert-info">📢{{ notification[0] }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <button class="btn btn-danger btn-sm clear-btn" id="clearNotifications">Clear All</button>
+                        </div>
+                    </div>
+                    <div><h2>Profile</h2></div>
+                </div>
+            </div>
+            <div class="" style="margin-left: 30px;">
+                <div class=""> 
+                    <div><h2>Lab Schedule</h2></div>
+                </div>
+            </div>
+            <div class="mainProfileContainer">
+                <div class="resourcesContainer">
+                    <div class="container py-4">
+                        <h1 class="text-center mb-4">Computer Lab Schedule</h1>
+                        
+                        <!-- Tab Navigation -->
+                        <ul class="nav nav-tabs mb-4" id="scheduleTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="mw-tab" data-bs-toggle="tab" data-bs-target="#mw" type="button" role="tab">Mon/Wed</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tth-tab" data-bs-toggle="tab" data-bs-target="#tth" type="button" role="tab">Tue/Thu</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="f-tab" data-bs-toggle="tab" data-bs-target="#f" type="button" role="tab">Friday</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="sat-tab" data-bs-toggle="tab" data-bs-target="#sat" type="button" role="tab">Saturday</button>
+                            </li>
+                        </ul>
+                
+                        <!-- Tab Content -->
+                        <div class="tab-content" id="scheduleTabsContent">
+                            <!-- Monday/Wednesday -->
+                            <div class="tab-pane fade show active schedule-tab" id="mw" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Lab 517</th>
+                                                <th>Lab 524</th>
+                                                <th>Lab 526</th>
+                                                <th>Lab 528</th>
+                                                <th>Lab 530</th>
+                                                <th>Lab 542</th>
+                                                <th>Lab 544</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="time-col">7:30 AM - 9:00 AM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">9:00 AM - 10:30 AM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">10:30 AM - 12:00 PM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">12:00 PM - 1:30 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">1:30 PM - 3:00 PM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">3:00 PM - 4:30 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">4:30 PM - 6:00 PM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">6:00 PM - 7:30 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">7:30 PM - 9:00 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Tuesday/Thursday -->
+                            <div class="tab-pane fade schedule-tab" id="tth" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Lab 517</th>
+                                                <th>Lab 524</th>
+                                                <th>Lab 526</th>
+                                                <th>Lab 528</th>
+                                                <th>Lab 530</th>
+                                                <th>Lab 542</th>
+                                                <th>Lab 544</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="time-col">7:30 AM - 9:00 AM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">9:00 AM - 10:30 AM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">10:30 AM - 12:00 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">12:00 PM - 1:30 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">1:30 PM - 3:00 PM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">3:00 PM - 4:30 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">4:30 PM - 6:00 PM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">6:00 PM - 7:30 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">7:30 PM - 9:00 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Friday -->
+                            <div class="tab-pane fade schedule-tab" id="f" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Lab 517</th>
+                                                <th>Lab 524</th>
+                                                <th>Lab 526</th>
+                                                <th>Lab 528</th>
+                                                <th>Lab 530</th>
+                                                <th>Lab 542</th>
+                                                <th>Lab 544</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="time-col">7:30 AM - 9:00 AM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">9:00 AM - 10:30 AM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">10:30 AM - 12:00 PM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">12:00 PM - 1:30 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">1:30 PM - 3:00 PM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">3:00 PM - 5:00 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">5:00 PM - 7:00 PM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">7:00 PM - 9:00 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Saturday -->
+                            <div class="tab-pane fade schedule-tab" id="sat" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Lab 517</th>
+                                                <th>Lab 524</th>
+                                                <th>Lab 526</th>
+                                                <th>Lab 528</th>
+                                                <th>Lab 530</th>
+                                                <th>Lab 542</th>
+                                                <th>Lab 544</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="time-col">7:30 AM - 9:00 AM</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">9:00 AM - 10:30 AM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">10:30 AM - 12:00 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">12:00 PM - 1:30 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">1:30 PM - 3:00 PM</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">3:00 PM - 4:30 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                                <td class="occupied">Occupied</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="time-col">4:30 PM - 6:00 PM</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                                <td class="available">Available</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                
+                </div>
+            </div>
+            
+            <!-- Bootstrap 5 JS Bundle with Popper -->
+           
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+            
+    <!-- Custom JavaScript for search and filter functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const filterSelect = document.getElementById('filterSelect');
+            const resourceCards = document.querySelectorAll('.resource-card');
+            const emptyState = document.getElementById('emptyState');
+            
+            function filterResources() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filterType = filterSelect.value;
+                let visibleCount = 0;
+                
+                resourceCards.forEach(card => {
+                    const title = card.querySelector('.card-title').textContent.toLowerCase();
+                    const description = card.querySelector('.card-text').textContent.toLowerCase();
+                    const cardType = card.getAttribute('data-type');
+                    
+                    const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+                    const matchesFilter = filterType === 'all' || cardType === filterType;
+                    
+                    if (matchesSearch && matchesFilter) {
+                        card.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                if (visibleCount === 0) {
+                    emptyState.style.display = 'block';
+                } else {
+                    emptyState.style.display = 'none';
+                }
+            }
+            
+            searchInput.addEventListener('input', filterResources);
+            filterSelect.addEventListener('change', filterResources);
+        });
+    </script>
+    <script src="../static/darkmode.js"></script> 
+    <script src="../static/notification.js"></script>
+</body>
+</html>

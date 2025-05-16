@@ -43,7 +43,7 @@
                                 </a>
                             </li>
                             <li class="nav-link">
-                                <a href="#">
+                                <a href="{{url_for('reservation_template')}}">
                                     <i class='bx bx-calendar-check icon'  ></i>
                                     <span class="text nav-text">Reservation</span>
                                 </a>
@@ -58,6 +58,24 @@
                                 <a href="{{url_for('edit_profile_template')}}">
                                     <i class='bx bx-user icon' ></i>
                                     <span class="text nav-text">Profile</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('lab_resources_template')}}">
+                                    <i class='bx bxs-report icon'></i>
+                                    <span class="text nav-text"> Lab Resources</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('lab_schedule_template')}}">
+                                    <i class='bx bxs-school icon'></i>
+                                    <span class="text nav-text">Lab Schedule</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('leaderboard_template')}}">
+                                    <i class='bx bxs-bar-chart-alt-2 icon'></i>
+                                    <span class="text nav-text">Leaderboards</span>
                                 </a>
                             </li>
                         </ul>
@@ -86,7 +104,23 @@
         <div class="contentDiv" style="margin-left: 30px;">
             <div class="topNavigation">
                 <div class="items item1 text"> 
-                    <div><i class='bx bxs-bell'></i></div>
+                    <div class="notification-container">
+                        <i class='bx bxs-bell icon' id="notificationIcon"></i>
+                        <span class="notification-badge" id="notificationCount">{% if notifications %}{{ notifications|length }}{% else %}0{% endif %}</span>
+                        <div class="notification-box" id="notificationBox" style="display: none;">
+                            <div class="notification-header">🔔 Notifications</div>
+                            <div id="notificationList">
+                                {% if not notifications %}
+                                    <strong style="font-size: 15px;">No notification available</strong>
+                                {% else %}
+                                    {% for notification in notifications %}
+                                        <div class="notification-item alert alert-info">📢{{ notification[0] }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <button class="btn btn-danger btn-sm clear-btn" id="clearNotifications">Clear All</button>
+                        </div>
+                    </div>
                     <div><h2>Profile</h2></div>
                 </div>
             </div>
@@ -286,6 +320,7 @@ let currentPage = 1;
 
 </script>
 <script src="../static/darkmode.js"></script> 
+<script src="../static/notification.js"></script>
 </html>
     
     

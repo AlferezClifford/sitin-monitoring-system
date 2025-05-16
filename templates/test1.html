@@ -3,20 +3,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap 5 JS (Popper Included) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
     <link rel="stylesheet" href="../static/css/dashboard-style.css">
-    
 </head>
 <body>
-    
     <div class="ParentDivContainer">
         <div>
             <nav class="sidebar close">
@@ -57,7 +53,7 @@
                             <li class="nav-link">
                                 <a href="{{url_for('sitin_records_template')}}">
                                     <i class='bx bx-calendar-check icon'  ></i>
-                                    <span class="text nav-text">Sitin Records</span>
+                                    <span class="text nav-text">Sitin Reports</span>
                                 </a>
                             </li>
                             <li class="nav-link">
@@ -85,21 +81,15 @@
                                 </a>
                             </li>
                             <li class="nav-link">
-                                <a href="{{url_for('reservation_request_template')}}">
+                              <a href="{{url_for('reservation_request_template')}}">
                                     <i class="fa-regular fa-calendar-days icon"></i>
                                     <span class="text nav-text">Reservation Request</span>
                                 </a>
                             </li>
                             <li class="nav-link">
-                                <a href="{{url_for('reservation_logs_template')}}">
+                                <a href="{{url_for('leaderboard_admin_template')}}">
                                     <i class="fa-solid fa-table-list icon"></i>
                                     <span class="text nav-text">Reservation Logs</span>
-                                </a>
-                            </li>
-                            <li class="nav-link">
-                                <a href="{{url_for('pc_monitor_template')}}">
-                                    <i class="fa-solid fa-desktop icon"></i>
-                                    <span class="text nav-text">Comlab Management</span>
                                 </a>
                             </li>
                         </ul>
@@ -126,36 +116,32 @@
             </nav>
         </div>
         <div class="contentDiv" style="margin-left: 30px;">
-            <div class="topNavigation">
-                <div class="items item1 text"> 
-                    <div class="notification-container">
-                        <i class='bx bxs-bell icon' id="notificationIcon"></i>
-                        <span class="notification-badge" id="notificationCount">{% if notifications %}{{ notifications|length }}{% else %}0{% endif %}</span>
-                        <div class="notification-box" id="notificationBox" style="display: none;">
-                            <div class="notification-header">🔔 Notifications</div>
-                            <div id="notificationList">
-                                {% if not notifications %}
-                                    <strong style="font-size: 15px;">No notification available</strong>
-                                {% else %}
-                                    {% for value in notifications.values() %}
-                                        <div class="notification-item alert alert-info">📢{{ value[0] }}</div>
-                                    {% endfor %}
-                                {% endif %}
-                            </div>
-                            <button class="btn btn-danger btn-sm clear-btn" id="clearNotifications">Clear All</button>
+          <div class="topNavigation">
+            <div class="items item1 text"> 
+                <div class="notification-container">
+                    <i class='bx bxs-bell icon' id="notificationIcon"></i>
+                    <span class="notification-badge" id="notificationCount">0</span>
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h5>Notifications</h5>
+                            <button id="markAllRead">Mark all as read</button>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <div class="empty-notification">No new notifications</div>
                         </div>
                     </div>
-                    <div><h2>Profile</h2></div>
                 </div>
+                <div><h2>Profile</h2></div>
             </div>
-            <div class="sitin-container" >
-                <div class="item-3">
-                    <div style="margin-bottom: 40px;">
-                        <h1>Feedbacks</h1>
+        </div>
+            <div class="sitin-container" style="justify-content: center;">
+                <div class="item-2" style=" width: 100%;">
+                    <div style="margin-bottom: 30px;">
+                        <h1>Reservation Logs</h1>
+                        <hr>
                     </div>
+                    
                     <div class="input-group marg" style="display: flex; justify-content: space-between;">
-                        <div class="dropdown-group">
-                        </div>
                         <div class="col-3 " id = "search_btn" > <!-- Adjust the number for different widths -->
                             <input type="search" class="form-control" id="searchInput" placeholder="Search" aria-label="Search" onkeyup="searchTable()">
                             <button class="btn btn-primary" type="submit">
@@ -165,30 +151,21 @@
                     </div>
                     <table class="table" id="sitInTable">
                         <thead style="text-align: center;">
-                          <tr>
-                            <th scope="col">Idno</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Course</th>
-                            <th scope="col">Lab</th>
-                            <th scope="col">Login</th>
-                            <th scope="col">Logout</th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Message</th>
-                          </tr>
-                          <hr>
-                        </thead>
-                       
-                        <tbody style="text-align: center;">
-                            {% for value in student.values() %}
                             <tr>
-                                {% for record in value[1:] %}
-                                    <td>{{record}}</td>
-                                {% endfor %}
+                                <th scope="col">ID Number</th>
+                                <th scope="col">Student Name</th>
+                                <th scope="col">purpose</th>
+                                <th scope="col">Laboratory</th>
+                                <th scope="col">PC Number</th>
+                                <th scope="col">Reservation Time In</th>
+                                <th scope="col">Reservation Date</th>
+                                <th scope="col">Status</th>
                             </tr>
-                        {% endfor %}                        
+                        </thead>
+                        <tbody id="tableBody" style="text-align: center;">
                         </tbody>
-                      </table>
-                      <div id="pagination">
+                    </table>
+                    <div id="pagination">
                         <button onclick="prevPage()" class="btn btn-primary">Previous</button>
                         <span id="pageInfo"></span>
                         <button onclick="nextPage()" class="btn btn-primary">Next</button>
@@ -197,8 +174,6 @@
             </div>
         </div>
     </div>
-
-  
 </body>
 <script>
     function searchTable() {
@@ -224,59 +199,57 @@
             rows[i].style.display = match ? "" : "none";
         }
     }
+
+    // Pagination 
     let currentPage = 1;
-const rowsPerPage = 5;
+    const rowsPerPage = 5;
 
-function displayTablePage(page) {
-    let table = document.getElementById("sitInTable");
-    let rows = table.getElementsByTagName("tr"); // Get all rows in the table (including header)
-    let totalRows = rows.length - 1; // Exclude the header row
+    function displayTablePage(page) {
+        let table = document.getElementById("sitInTable");
+        let tbody = document.getElementById("tableBody");
+        let rows = tbody.getElementsByTagName("tr");
 
-    let totalPages = Math.ceil(totalRows / rowsPerPage);
-    if (page < 1) page = 1;
-    if (page > totalPages) page = totalPages;
+        let totalPages = Math.ceil(rows.length / rowsPerPage);
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
 
-    // Hide all rows
-    for (let i = 1; i < rows.length; i++) {
-        rows[i].style.display = "none";
+        // Hide all rows
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].style.display = "none";
+        }
+
+        // Show only the rows for the current page
+        for (let i = (page - 1) * rowsPerPage; i < page * rowsPerPage && i < rows.length; i++) {
+            rows[i].style.display = "";
+        }
+
+        // Update page info
+        document.getElementById("pageInfo").innerText = `Page ${page} of ${totalPages}`;
+        currentPage = page;
     }
 
-    // Show only the rows for the current page
-    for (let i = (page - 1) * rowsPerPage + 1; i < page * rowsPerPage + 1 && i < rows.length; i++) {
-        rows[i].style.display = "";
+    function prevPage() {
+        if (currentPage > 1) {
+            displayTablePage(currentPage - 1);
+        }
     }
 
-    // Update page info
-    document.getElementById("pageInfo").innerText = `Page ${page} of ${totalPages}`;
-    currentPage = page;
-}
+    function nextPage() {
+        let table = document.getElementById("sitInTable");
+        let tbody = document.getElementById("tableBody");
+        let rows = tbody.getElementsByTagName("tr");
+        let totalPages = Math.ceil(rows.length / rowsPerPage);
 
-function prevPage() {
-    if (currentPage > 1) {
-        displayTablePage(currentPage - 1);
+        if (currentPage < totalPages) {
+            displayTablePage(currentPage + 1);
+        }
     }
-}
 
-function nextPage() {
-    let table = document.getElementById("sitInTable");
-    let rows = table.getElementsByTagName("tr"); // Get all rows in the table (including header)
-    let totalRows = rows.length - 1; // Exclude the header row
-    let totalPages = Math.ceil(totalRows / rowsPerPage);
-
-    if (currentPage < totalPages) {
-        displayTablePage(currentPage + 1);
-    }
-}
-
-// Initialize table display
-displayTablePage(1);
-    function resetSession() {
-    document.getElementById('remaining_session').value = 30;
-  }
-
+    // Initialize table display
+    displayTablePage(1);
+    
 </script>
-<script src="../static/darkmode.js"></script>
-<script src="../static/notification.js"></script>
+<script src="../static/darkmode.js"></script> 
 </html>
     
     

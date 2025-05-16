@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratories</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
+    <link rel="stylesheet" href="../static/css/dashboard-style.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        .card {
+            border-radius: 18px;
+            border: none;
+            box-shadow: 0 2px 12px rgba(30,41,59,0.06);
+            width: 100%;
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.625rem 1rem;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 0.625rem 1.25rem;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        .pc-button {
+            min-width: 50px;
+            height: 40px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            margin: 2px;
+        }
+
+        .pc-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        #pcSelection {
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 10px 0 10px 10px;
+            white-space: nowrap;
+        }
+
+        .pc-grid {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+        }
+
+        .pc-list-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-auto-rows: minmax(36px, auto);
+            gap: 8px;
+            max-width: 100%;
+            max-height: 160px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 8px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .pc-btn {
+            border: 2px solid #1976d2;
+            background: #f5faff;
+            color: #1976d2;
+            padding: 8px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .pc-btn.selected {
+            background: #1976d2;
+            color: #fff;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            padding: 1rem;
+            border: none;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-color: var(--border-color);
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(37, 99, 235, 0.02);
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(37, 99, 235, 0.04);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .input-group .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .input-group .form-control {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .form-control[readonly] {
+            background-color: #f8fafc;
+            cursor: not-allowed;
+        }
+
+        #idNo {
+            background-color: white !important;
+            cursor: text !important;
+            pointer-events: auto !important;
+        }
+
+        #idNo:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .pc-card.selected {
+            border: 3px solid #ff9800;
+            background: #fff3e0;
+        }
+
+        body {
+            background: #f6f8fa;
+        }
+
+        .main-container {
+            margin: 40px auto 0 auto;
+            padding: 0 16px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="ParentDivContainer">
+        <div>
+            <nav class="sidebar close">
+                <header>
+                    <div class="image-text">
+                        <span class="image">
+                            <img src="../static/imgs/PSITS_LOGO.png" alt="logo">
+                        </span>
+                        <div class="text header-text">
+                            <span class="name">Sitin-Monitoring</span>
+                            <span class="prefession">Project</span>
+                        </div>
+                    </div>
+
+                    <i class="bx bx-chevron-right toggle"></i>
+                </header>
+                <div class="menu-bar">
+                    <div class="menu">
+                        <ul class="menu-links">
+                            <li class="nav-link">
+                                <a href="{{url_for('dashboard')}}">
+                                    <i class='bx bx-home-alt icon' ></i>
+                                    <span class="text nav-text">Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('reservation_template')}}">
+                                    <i class='bx bx-calendar-check icon'  ></i>
+                                    <span class="text nav-text">Reservation</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('history_table_temp')}}">
+                                    <i class='bx bx-time-five icon' ></i>
+                                    <span class="text nav-text">History</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('edit_profile_template')}}">
+                                    <i class='bx bx-user icon' ></i>
+                                    <span class="text nav-text">Profile</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <li class="nav-link">
+                            <a href="{{url_for('lab_resources_template')}}">
+                                <i class='bx bxs-report icon'></i>
+                                <span class="text nav-text"> Lab Resources</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="{{url_for('lab_schedule_template')}}">
+                                <i class='bx bxs-school icon'></i>
+                                <span class="text nav-text">Lab Schedule</span>
+                            </a>
+                        </li>
+                        <li class="nav-link">
+                            <a href="{{url_for('leaderboard_template')}}">
+                                <i class='bx bxs-bar-chart-alt-2 icon'></i>
+                                <span class="text nav-text">Leaderboards</span>
+                            </a>
+                        </li>
+                    </div>
+                    <div class="bottom-content">
+                        <li class="">
+                            <a href="{{url_for('logout')}}">
+                                <i class='bx bx-log-out icon' id="logout-btn"></i>
+                                <span class="text nav-text">Logout</span>
+                            </a>
+                        </li>
+                        <li class="mode">
+                            <div class="moon-sun">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun  icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark Mode</span>
+                            <div class="toggle-switch"> 
+                                <span class="switch"></span>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="contentDiv">
+            <div class="topNavigation">
+                <div class="items item1 text"> 
+                    <div class="notification-container">
+                        <i class='bx bxs-bell icon' id="notificationIcon"></i>
+                        <span class="notification-badge" id="notificationCount">{% if notifications %}{{ notifications|length }}{% else %}0{% endif %}</span>
+                        <div class="notification-box" id="notificationBox" style="display: none;">
+                            <div class="notification-header">🔔 Notifications</div>
+                            <div id="notificationList">
+                                {% if not notifications %}
+                                    <strong style="font-size: 15px;">No notification available</strong>
+                                {% else %}
+                                    {% for notification in notifications %}
+                                        <div class="notification-item alert alert-info">📢{{ notification[0] }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <button class="btn btn-danger btn-sm clear-btn" id="clearNotifications">Clear All</button>
+                        </div>
+                    </div>
+                    <div><h2>Profile</h2></div>
+                </div>
+            </div>
+            <div class="container-fluid py-4">
+                <div class="row test-page-main">
+                    <!-- Reservation Form - Smaller -->
+                    <div class="col-12 col-lg-4 mb-4 mb-lg-0">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Make a Reservation</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="reservationForm" novalidate>
+                                    <div class="mb-3">
+                                        <label for="idNo" class="form-label">ID No:</label>
+                                        <input type="text" class="form-control" id="idNo" readonly>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="fullName" class="form-label">Full Name:</label>
+                                        <input type="text" class="form-control" id="fullName" readonly>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="remainingSessions" class="form-label">Remaining Sessions:</label>
+                                        <input type="number" class="form-control" id="remainingSessions" readonly>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="purpose" class="form-label">Purpose:</label>
+                                        <select class="form-select" id="purpose" required>
+                                            <option value="">Select Purpose</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="laboratory" class="form-label">Laboratory:</label>
+                                        <select class="form-select" id="laboratory" required>
+                                            <option value="">Select Laboratory</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Select PC:</label>
+                                        <div class="pc-list-grid">
+                                            <!-- PCs will be populated dynamically -->
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="row g-2 align-items-end">
+                                            <div class="col-6">
+                                                <label for="date" class="form-label">Date:</label>
+                                                <input type="date" class="form-control" id="date" novalidate>
+                                            </div>
+                                            <div class="col-6">
+                                                <label for="timeIn" class="form-label">Time In:</label>
+                                                <input type="time" class="form-control" id="timeIn" novalidate>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary w-100">Reserve</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reservation List - Wider -->
+                    <div class="col-12 col-lg-7">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Reservation List</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Purpose</th>
+                                                <th>Lab</th>
+                                                <th>PC</th>
+                                                <th>Date</th>
+                                                <th>Time</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="reservationTableBody">
+                                            <!-- Will be populated dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Initialize the form with data from the server
+        const studentRecord = JSON.parse('{{ student_record|tojson|safe }}') || [];
+        const purposes = JSON.parse('{{ purpose|tojson|safe }}') || {};
+        const labIds = JSON.parse('{{ lab_ids|tojson|safe }}') || [];
+        const grouped = JSON.parse('{{ grouped|tojson|safe }}') || {};
+        const initialReservations = JSON.parse('{{ reservations|tojson|safe }}') || [];
+
+        // Function to display student data
+        function displayStudentData() {
+            if (studentRecord && studentRecord.length > 0) {
+                const student = studentRecord[0];
+                document.getElementById('idNo').value = student[0] || '';
+                document.getElementById('fullName').value = student[1] || '';
+                document.getElementById('remainingSessions').value = student[2] || '';
+            }
+        }
+
+        // Function to format date
+        function formatDate(dateString) {
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch (e) {
+                return dateString || '';
+            }
+        }
+
+        // Function to update reservation table
+        function updateReservationTable(reservations) {
+            const tableBody = document.getElementById('reservationTableBody');
+            tableBody.innerHTML = '';
+            reservations.forEach(reservation => {
+                const [purpose, lab, pc, date, time, status] = reservation;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${purpose || ''}</td>
+                    <td>${lab || ''}</td>
+                    <td>${pc || ''}</td>
+                    <td>${formatDate(date) || ''}</td>
+                    <td>${time || ''}</td>
+                    <td>
+                        <span class="badge ${
+                            status === 'Pending' ? 'bg-warning' : 
+                            status === 'Approved' ? 'bg-success' : 
+                            status === 'Disapproved' ? 'bg-danger' : 
+                            'bg-dark'
+                        }">${status || 'Unknown'}</span>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Initialize the table and form when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            displayStudentData();
+            loadPurposes();
+            loadLaboratories();
+            updateReservationTable(initialReservations);
+        });
+
+        function loadPurposes() {
+            const purposeSelect = document.getElementById('purpose');
+            purposeSelect.innerHTML = '<option value="">Select Purpose</option>';
+            for (const [key, value] of Object.entries(purposes)) {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = value;
+                purposeSelect.appendChild(option);
+            }
+        }
+
+        function loadLaboratories() {
+            const labSelect = document.getElementById('laboratory');
+            labSelect.innerHTML = '<option value="">Select Laboratory</option>';
+            const sortedLabIds = [...labIds].sort((a, b) => a - b);
+            sortedLabIds.forEach(labId => {
+                const option = document.createElement('option');
+                option.value = labId;
+                option.textContent = `Laboratory ${labId}`;
+                labSelect.appendChild(option);
+            });
+            labSelect.addEventListener('change', function() {
+                const selectedLab = this.value;
+                loadPCs(selectedLab);
+            });
+        }
+
+        function loadPCs(selectedLab = null) {
+            const pcGrid = document.querySelector('.pc-list-grid');
+            pcGrid.innerHTML = '';
+            if (!selectedLab) return;
+            const labPCs = grouped[selectedLab] || [];
+            const sortedPCs = [...labPCs].sort((a, b) => a[0] - b[0]);
+            sortedPCs.forEach(([pcNumber, status]) => {
+                const pcButton = document.createElement('button');
+                pcButton.className = 'pc-btn';
+                pcButton.dataset.pcId = pcNumber;
+                pcButton.textContent = `PC-${pcNumber}`;
+                if (status === 'Available') {
+                    pcButton.classList.add('available');
+                    pcButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        document.querySelectorAll('.pc-btn').forEach(btn => btn.classList.remove('selected'));
+                        this.classList.add('selected');
+                    });
+                } else {
+                    pcButton.classList.add('unavailable');
+                    pcButton.disabled = true;
+                }
+                pcGrid.appendChild(pcButton);
+            });
+        }
+
+        let isSubmitting = false;
+        async function submitReservation(formData) {
+            if (isSubmitting) return;
+            try {
+                isSubmitting = true;
+                const response = await fetch('/reservation/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    document.getElementById('purpose').value = '';
+                    document.getElementById('laboratory').value = '';
+                    document.getElementById('date').value = '';
+                    document.getElementById('timeIn').value = '';
+                    document.querySelectorAll('.pc-btn').forEach(btn => btn.classList.remove('selected'));
+                    document.querySelector('.pc-list-grid').innerHTML = '';
+                    alert('Reservation submitted successfully!');
+                } else {
+                    alert(result.message || 'Failed to submit reservation. Please try again.');
+                }
+            } catch (error) {
+                alert('Failed to submit reservation. Please try again.');
+            } finally {
+                isSubmitting = false;
+            }
+        }
+        document.getElementById('reservationForm').addEventListener('submit', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('timeIn').value;
+            const purpose = document.getElementById('purpose').value;
+            const laboratory = document.getElementById('laboratory').value;
+            const selectedPC = document.querySelector('.pc-btn.selected');
+            if (!date || !time) { alert('Please select both date and time'); return; }
+            if (!purpose) { alert('Please select a purpose'); return; }
+            if (!laboratory) { alert('Please select a laboratory'); return; }
+            if (!selectedPC) { alert('Please select a PC'); return; }
+            const formData = {
+                idNo: document.getElementById('idNo').value,
+                purpose: purpose,
+                laboratory: laboratory,
+                selectedPC: selectedPC.dataset.pcId,
+                date: date,
+                time: time
+            };
+            submitReservation(formData);
+            return false;
+        }, true);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/darkmode.js"></script>
+    <script src="../static/notification.js"></script>
+</body>
+</html>
+    

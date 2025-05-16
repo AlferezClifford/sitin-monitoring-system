@@ -37,14 +37,8 @@
                     <div class="menu">
                         <ul class="menu-links">
                             <li class="nav-link">
-                                <a href="">
-                                    <i class='bx bx-home-alt icon' ></i>
-                                    <span class="text nav-text">Dashboard</span>
-                                </a>
-                            </li>
-                            <li class="nav-link">
                                 <a href="{{url_for('announcement_template')}}">
-                                    <i class='bx bxs-megaphone  icon' ></i>
+                                    <i class='bx bx-home-alt icon' ></i>
                                     <span class="text nav-text ">Anouncement</span>
                                 </a>
                             </li>
@@ -78,6 +72,35 @@
                                     <span class="text nav-text">Feedbacks Records</span>
                                 </a>
                             </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('resource_template')}}">
+                                    <i class='bx bx-cloud-upload icon'></i>
+                                    <span class="text nav-text">Lab Resources Uploader</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('leaderboard_admin_template')}}">
+                                    <i class='bx bxs-bar-chart-alt-2 icon'></i>
+                                    <span class="text nav-text">Leaderboards</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('leaderboard_admin_template')}}">
+                                    <i class="fa-regular fa-calendar-days icon"></i>
+                                    <span class="text nav-text">Reservation Request</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('reservation_logs_template')}}">                                    <i class="fa-solid fa-table-list icon"></i>
+                                    <span class="text nav-text">Reservation Logs</span>
+                                </a>
+                            </li>
+                            <li class="nav-link">
+                                <a href="{{url_for('pc_monitor_template')}}">
+                                    <i class="fa-solid fa-desktop icon"></i>
+                                    <span class="text nav-text">Comlab Management</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <div class="bottom-content">
@@ -104,7 +127,23 @@
         <div class="contentDiv" style="margin-left: 30px;">
             <div class="topNavigation">
                 <div class="items item1 text"> 
-                    <div><i class='bx bxs-bell'></i></div>
+                    <div class="notification-container">
+                        <i class='bx bxs-bell icon' id="notificationIcon"></i>
+                        <span class="notification-badge" id="notificationCount">{% if notifications %}{{ notifications|length }}{% else %}0{% endif %}</span>
+                        <div class="notification-box" id="notificationBox" style="display: none;">
+                            <div class="notification-header">🔔 Notifications</div>
+                            <div id="notificationList">
+                                {% if not notifications %}
+                                    <strong style="font-size: 15px;">No notification available</strong>
+                                {% else %}
+                                    {% for value in notifications.values() %}
+                                        <div class="notification-item alert alert-info">📢{{ value[0] }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <button class="btn btn-danger btn-sm clear-btn" id="clearNotifications">Clear All</button>
+                        </div>
+                    </div>
                     <div><h2>Profile</h2></div>
                 </div>
             </div>
@@ -298,17 +337,10 @@ function generateExport() {
 }
 
 // Export to Excel
+// Export to Excel
 function exportToExcel() {
-    // Clone the table and show all rows
     let table = document.getElementById("sitInTable");
-    let clone = table.cloneNode(true);
-    clone.querySelectorAll('tr').forEach(row => row.style.display = '');
-    document.body.appendChild(clone);
-    clone.style.visibility = 'hidden';
-    clone.style.position = 'absolute';
-    clone.style.left = '-9999px';
-
-    let wb = XLSX.utils.table_to_book(clone, { sheet: "Student Records" });
+    let wb = XLSX.utils.table_to_book(table, { sheet: "Student Records" });
     let ws = wb.Sheets["Student Records"];
 
     // Auto-adjust column widths
@@ -316,97 +348,222 @@ function exportToExcel() {
     let range = XLSX.utils.decode_range(ws["!ref"]);
 
     for (let C = range.s.c; C <= range.e.c; C++) {
-        let maxWidth = 10;
+        let maxWidth = 10; // Default minimum width
+
         for (let R = range.s.r; R <= range.e.r; R++) {
             let cellRef = XLSX.utils.encode_cell({ r: R, c: C });
             let cell = ws[cellRef];
+
             if (cell && cell.v) {
                 let cellValue = cell.v.toString();
                 maxWidth = Math.max(maxWidth, cellValue.length + 2);
             }
         }
+
         columnWidths.push({ wch: maxWidth });
     }
-    ws["!cols"] = columnWidths;
 
-    // Fix Date Column Format
+    ws["!cols"] = columnWidths; // Apply column width settings
+
+    // **Fix Date Column Format**
     for (let R = range.s.r + 1; R <= range.e.r; R++) {
-        let dateCellRef = XLSX.utils.encode_cell({ r: R, c: 6 });
+        let dateCellRef = XLSX.utils.encode_cell({ r: R, c: 6 }); // Adjust column index if needed
         if (ws[dateCellRef] && ws[dateCellRef].v) {
-            let excelDate = new Date(ws[dateCellRef].v);
-            ws[dateCellRef].v = excelDate;
-            ws[dateCellRef].t = "d";
-            ws[dateCellRef].z = "yyyy-mm-dd";
+            let excelDate = new Date(ws[dateCellRef].v); // Convert to Date object
+            ws[dateCellRef].v = excelDate; // Set correct date value
+            ws[dateCellRef].t = "d"; // Set cell type as date
+            ws[dateCellRef].z = "yyyy-mm-dd"; // Set desired format
         }
     }
 
     XLSX.writeFile(wb, "student_records.xlsx");
-    document.body.removeChild(clone);
 }
 
-// Export to PDF
-function exportToPDF() {
-    const { jsPDF } = window.jspdf;
-    let doc = new jsPDF();
-    
-    // Clone table and show all rows
-    let table = document.getElementById("sitInTable");
-    let clone = table.cloneNode(true);
-    clone.querySelectorAll('tr').forEach(row => row.style.display = '');
-    document.body.appendChild(clone);
-    clone.style.visibility = 'hidden';
-    clone.style.position = 'absolute';
-    clone.style.left = '-9999px';
-
-    doc.text("Student Records", 14, 10);
-    doc.autoTable({ html: clone });
-    doc.save("student_records.pdf");
-
-    document.body.removeChild(clone);
-}
-
-// Export to CSV
+// Export to CSV with header
 function exportToCSV() {
-    // Clone table and show all rows
     let table = document.getElementById("sitInTable");
-    let clone = table.cloneNode(true);
-    clone.querySelectorAll('tr').forEach(row => row.style.display = '');
-    document.body.appendChild(clone);
-    clone.style.visibility = 'hidden';
-    clone.style.position = 'absolute';
-    clone.style.left = '-9999px';
+    let rows = table.querySelectorAll("tr");
+    
+    // Create header text
+    const headerText = [
+        "University of Cebu - Main College of Computer Studies",
+        "Computer Laboratory Sitin Monitoring",
+        "System Report",
+        "" // Empty line for spacing
+    ].join("\n");
+    
+    let csvContent = headerText + "\n";
 
-    let rows = clone.querySelectorAll("tr");
-    let csvContent = "";
     rows.forEach(row => {
-        let cols = row.querySelectorAll("th, td");
-        let rowData = [];
-        cols.forEach(col => rowData.push(col.innerText));
-        csvContent += rowData.join(",") + "\n";
+        if (row.style.display !== 'none') { // Only include visible rows
+            let cols = row.querySelectorAll("th, td");
+            let rowData = [];
+            cols.forEach(col => {
+                // Escape commas and quotes in CSV
+                let text = col.innerText.replace(/"/g, '""');
+                if (text.includes(',')) {
+                    text = `"${text}"`;
+                }
+                rowData.push(text);
+            });
+            csvContent += rowData.join(",") + "\n";
+        }
     });
 
-    let blob = new Blob([csvContent], { type: "text/csv" });
+    let blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     let a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "student_records.csv";
+    document.body.appendChild(a);
     a.click();
-    document.body.removeChild(clone);
+    document.body.removeChild(a);
 }
-// Print Table
+
+// Export to PDF with header
+function exportToPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Add header
+    doc.setFontSize(16);
+    doc.text("University of Cebu - Main College of Computer Studies", 105, 15, { align: 'center' });
+    doc.setFontSize(14);
+    doc.text("Computer Laboratory Sitin Monitoring", 105, 25, { align: 'center' });
+    doc.setFontSize(12);
+    doc.text("System Report", 105, 35, { align: 'center' });
+    
+    // Get table data
+    const table = document.getElementById("sitInTable");
+    const rows = table.querySelectorAll("tr:not([style*='display: none'])");
+    const headers = [];
+    const data = [];
+    
+    // Process headers
+    const headerCells = rows[0].querySelectorAll("th");
+    headerCells.forEach(th => headers.push(th.innerText));
+    
+    // Process data rows
+    for (let i = 1; i < rows.length; i++) {
+        const rowData = [];
+        const cells = rows[i].querySelectorAll("td");
+        cells.forEach(td => rowData.push(td.innerText));
+        data.push(rowData);
+    }
+    
+    // Add table to PDF
+    doc.autoTable({
+        head: [headers],
+        body: data,
+        startY: 45, // Start below header
+        styles: {
+            fontSize: 8,
+            cellPadding: 2,
+            overflow: 'linebreak'
+        },
+        headerStyles: {
+            fillColor: [220, 220, 220],
+            textColor: 0
+        }
+    });
+    
+    // Save the PDF
+    doc.save("student_records.pdf");
+}
 function printTable() {
-    let table = document.getElementById("sitInTable");
-    let clone = table.cloneNode(true);
-    clone.querySelectorAll('tr').forEach(row => row.style.display = '');
+    // Create print-friendly container
+    const printContainer = document.createElement('div');
+    printContainer.id = 'print-container';
+    
+    // Add header
+    printContainer.innerHTML = `
+        <div class="print-header">
+            <h1>University of Cebu - Main College of Computer Studies</h1>
+            <h2>Computer Laboratory Sitin Monitoring</h2>
+            <h3>System Report</h3>
+        </div>
+    `;
 
-    let printWindow = window.open('', '_blank');
-    printWindow.document.write('<html><head><title>Print</title></head><body>');
-    printWindow.document.write('<h1>Student Records</h1>');
-    printWindow.document.write(clone.outerHTML);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-    printWindow.print();
+    // Clone the table
+    const originalTable = document.getElementById('sitInTable');
+    const tableClone = originalTable.cloneNode(true);
+    
+    // Remove rows that are hidden (filtered out)
+    const rows = tableClone.querySelectorAll('tr');
+    rows.forEach(row => {
+        if (row.style.display === 'none') {
+            row.remove();
+        } else {
+            // Ensure all cells are visible for printing
+            const cells = row.querySelectorAll('td, th');
+            cells.forEach(cell => cell.style.display = '');
+        }
+    });
+
+    // Add the filtered table to print container
+    printContainer.appendChild(tableClone);
+
+    // Create temporary styles
+    const style = document.createElement('style');
+    style.innerHTML = `
+        @media print {
+            body * {
+                visibility: hidden;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            #print-container, #print-container * {
+                visibility: visible;
+            }
+            #print-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 15px;
+            }
+            .print-header {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            h1 { font-size: 24px; margin: 5px 0; }
+            h2 { font-size: 20px; margin: 5px 0; }
+            h3 { font-size: 16px; margin: 5px 0 15px 0; }
+            table {
+                width: 100% !important;
+                border-collapse: collapse;
+                margin-top: 10px;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: center;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+        @page {
+            size: auto;
+            margin: 10mm;
+        }
+    `;
+
+    // Add elements to document
+    document.body.appendChild(printContainer);
+    document.head.appendChild(style);
+
+    // Trigger print
+    window.print();
+
+    // Cleanup after print
+    setTimeout(() => {
+        document.body.removeChild(printContainer);
+        document.head.removeChild(style);
+    }, 100);
 }
-
 let currentPage = 1;
 const rowsPerPage = 5;
 
@@ -457,6 +614,7 @@ displayTablePage(1);
 
 </script>
 <script src="../static/darkmode.js"></script> 
+<script src="../static/notification.js"></script>
 </html>
     
     
