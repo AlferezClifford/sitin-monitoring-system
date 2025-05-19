@@ -239,7 +239,7 @@ def display_reservation(idno: str):
     return get_process(sql)
 
 def display_reservation_request():
-    sql = f"SELECT reserv_id, idno, name, type_of_purpose, lab_id, pc_id, reserv_time, res_date FROM display_reservation WHERE status = 'pending' ORDER BY reserv_id DESC"
+    sql = "SELECT reserv_id, idno, name, type_of_purpose, lab_id, pc_id, reserv_time, res_date FROM display_reservation WHERE status = 'pending' ORDER BY reserv_id DESC"
     return get_process(sql)
 
 def approve_reservation_request(reservation_id: int, status: str):
